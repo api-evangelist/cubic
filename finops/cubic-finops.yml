@@ -1,5 +1,6 @@
 specification: FinOps Framework
 specificationVersion: '1.0'
+schema: https://www.finops.org/framework/
 alignedWith:
   framework: FinOps Foundation Framework
   frameworkUrl: https://www.finops.org/framework/
@@ -9,106 +10,90 @@ alignedWith:
 provider: Cubic Corporation
 providerId: cubic
 publisherName: Cubic Corporation
-serviceCategory: API
+serviceCategory: Transportation & Defense Systems
 created: '2026-05-04'
-modified: '2026-05-04'
+modified: '2026-05-05'
+reconciled: false
 tags:
   - Defense
   - Transportation
-  - Technology
   - FinOps
-  - Cost Management
   - FOCUS
-description: FinOps framework definition for the Cubic Corporation API surface. Provides a FOCUS-aligned
-  mapping for cost allocation, usage measurement, and unit-economics reporting across the provider's APIs.
+description: 'FOCUS-aligned FinOps for Cubic: contract-priced transit and defense systems with embedded
+  APIs; spend is tracked as project / milestone delivery rather than per-call usage.'
+sources:
+  - https://www.cubic.com/
+notes: No public pricing. Treat Cubic spend as project-based; reconcile against the contract milestone
+  schedule.
 principles:
   - name: Visibility
-    description: Make API consumption costs visible to engineering, product, and finance teams in near
-      real-time.
+    description: Track Cubic spend through contract milestones and delivered-system commissioning rather
+      than API-call telemetry.
   - name: Allocation
-    description: Tag every chargeable API call with the consuming team, environment, application, and
-      feature so cost can be allocated.
+    description: Allocate to the transit agency / mission program owning the contract; tag delivered
+      stations / endpoints by route / theater.
   - name: Optimization
-    description: Continuously evaluate request patterns, caching, batching, and tier selection to reduce
-      cost per useful unit of work.
+    description: Negotiate scope at contract milestones; consolidate vendor systems across modes / theaters
+      to reduce duplicate licensing.
   - name: Accountability
-    description: Establish budget owners and chargeback or showback flows for each consuming team.
+    description: Program management and finance jointly own the Cubic contract; review milestone burn-down
+      and change-orders quarterly.
 domains:
   - name: Understand Usage and Cost
     capabilities:
-      - Data Ingestion
       - Allocation
       - Reporting and Analytics
-      - Anomaly Management
   - name: Quantify Business Value
     capabilities:
-      - Planning and Estimating
       - Forecasting
       - Budgeting
-      - Benchmarking
-      - Unit Economics
   - name: Optimize Usage and Cost
     capabilities:
-      - Architecting for Cloud
-      - Rate Optimization
       - Workload Optimization
-      - Cloud Sustainability
-      - Licensing and SaaS
   - name: Manage the FinOps Practice
     capabilities:
-      - FinOps Practice Operations
-      - FinOps Education and Enablement
       - Invoicing and Chargeback
-      - Onboarding Workloads
-      - Intersecting Disciplines
 billingModel:
-  pricingCategory: Usage-Based
-  billingFrequency: Monthly
+  pricingCategory: Contract / Milestone
+  billingFrequency: Per-Invoice
   billingCurrency: USD
   chargeCategories:
-    - Usage
     - Purchase
+    - Usage
     - Tax
-    - Credit
     - Adjustment
-  chargeFrequency: Recurring
+  chargeFrequency: Milestone
 focusColumns:
   ServiceName: Cubic Corporation
-  ServiceCategory: Developer Tools / API
+  ServiceCategory: Transportation & Defense Systems
   ProviderName: Cubic Corporation
   PublisherName: Cubic Corporation
   InvoiceIssuerName: Cubic Corporation
-  PricingCategory: Usage-Based
-  PricingUnit: request
+  PricingCategory: Custom Contract
   BillingCurrency: USD
-  ChargeCategory: Usage
+  ChargeCategory: Purchase
 meters:
+  - name: contract_milestones
+    description: Delivered milestones under a Cubic systems contract
+    unit: milestone
+    aggregation: sum
+    dimensions:
+      - program
+      - division
+  - name: deployed_endpoints
+    description: Cubic-installed endpoints (fare gates, ATM training systems, etc.)
+    unit: endpoint
+    aggregation: max
+    dimensions:
+      - site
+      - region
   - name: api_requests
-    description: Count of billable API requests
+    description: API calls within delivered systems (not separately billed; observed for capacity)
     unit: request
     aggregation: sum
     dimensions:
       - api
-      - endpoint
-      - tier
-      - region
-      - consumer
-  - name: data_egress
-    description: Bytes returned over the network in API responses
-    unit: GB
-    aggregation: sum
-    dimensions:
-      - api
-      - region
-      - consumer
-  - name: compute_seconds
-    description: Server-side compute consumed by the request, where applicable
-    unit: second
-    aggregation: sum
-    dimensions:
-      - api
-      - endpoint
-      - tier
+      - tenant
 apis:
   - name: Cubic Corporation API
     baseURL: https://api.cubic.com
@@ -119,8 +104,8 @@ apis:
     serviceName: Cubic Corporation API
     serviceCategory: API
 unitEconomics:
-  - name: Cost per 1K Requests
-    metric: billed_cost / (api_requests / 1000)
+  - name: Cost per Deployed Endpoint
+    metric: billed_cost / deployed_endpoints
     target: TBD
   - name: Cost per Active Consumer
     metric: billed_cost / active_consumers
