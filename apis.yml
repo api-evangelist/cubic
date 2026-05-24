@@ -32,6 +32,8 @@ common:
     url: https://www.linkedin.com/company/cubic
   - type: Website
     url: https://www.cubic.com
+  - type: LLMsTxt
+    url: https://developer.cubic.com/llms.txt
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
