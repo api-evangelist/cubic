@@ -32,7 +32,7 @@ common:
     url: https://www.linkedin.com/company/cubic
   - type: Website
     url: https://www.cubic.com
-  - type: LLMsTxt
+  - type: LlmsText
     url: https://developer.cubic.com/llms.txt
 maintainers:
   - FN: Kin Lane
