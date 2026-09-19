@@ -1,0 +1,25 @@
+generated: '2026-09-19'
+method: generated
+source: openapi/cubic-umo-iq-public-feed-openapi.yml, https://retro.umoiq.com/xmlFeedDocs/NextBusXMLFeed.pdf
+provider: Cubic Corporation
+providerId: cubic
+description: >-
+  Agent Skills for the Umo IQ Public Feed, the one Cubic API with public documentation. Both are
+  grounded in the two operationIds and nine commands of the repo's OpenAPI; no endpoint, field or
+  behaviour appears in them that was not either published by Cubic or observed on the live host
+  on 2026-09-19. Cubic publishes no skills or AGENTS.md of its own — searched the feed host,
+  umoiq.com and www.cubic.com on 2026-09-19.
+skills:
+  - name: next-arrivals-at-a-stop
+    file: cubic-next-arrivals-at-a-stop.md
+    api: Umo IQ Public Feed API
+    description: Resolve agency, route and stop, then read arrival predictions and active service messages the way a rider-facing client should.
+    commands: [agencyList, routeList, routeConfig, predictions, predictionsForMultiStops, messages]
+  - name: track-a-bus
+    file: cubic-track-a-bus.md
+    api: Umo IQ Public Feed API
+    description: Follow live vehicle positions on a route, polling incrementally with the lastTime watermark inside the provider's published limits.
+    commands: [agencyList, routeList, vehicleLocations, vehicleLocation]
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

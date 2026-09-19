@@ -1,0 +1,858 @@
+openapi: 3.1.0
+x-generated-from: documentation
+x-authored-by: API Evangelist
+x-apievangelist:
+  method: generated
+  generated: '2026-09-19'
+  first_party: false
+  source: https://retro.umoiq.com/xmlFeedDocs/NextBusXMLFeed.pdf
+  source_revision: Public XML Feed revision 1.24, 18 May 2021
+  note: >-
+    Cubic Transportation Systems publishes this feed as a PDF, not as a machine-readable
+    contract. This document was written by API Evangelist from that PDF and then checked
+    command-by-command against the live host on 2026-09-19 (see x-evidence). Nothing here
+    is asserted that the PDF does not document or the host did not answer.
+  ownership: >-
+    retro.umoiq.com's footer reads "Cubic Transportation Systems, Inc. Proprietary
+    Information" and the PDF routes support to umoiq.support@cubic.com.
+info:
+  title: Umo IQ Public Feed API
+  version: '1.24'
+  summary: Cubic Transportation Systems' anonymous real-time transit feed (formerly the NextBus Public XML Feed).
+  description: >-
+    The Umo IQ Public Feed provides transit agency configuration (agencies, routes, stops,
+    directions, paths), arrival/departure predictions, schedules, active service messages and
+    live vehicle locations for the agencies Cubic's Umo IQ serves. The feed is a single GET
+    endpoint driven by a `command` query parameter, available as XML at `/publicXMLFeed` and as
+    JSON at `/publicJSONFeed`; both forms accept the same commands and parameters and return the
+    same fields (the JSON form renders every value as a string, and renders a single child as an
+    object where several would be an array). No authentication is required. Every response,
+    including an error, is HTTP 200; failures are signalled by an `Error` element carrying a
+    `shouldRetry` attribute. Documented as the NextBus Public XML Feed since 2009; revision 1.24
+    (May 2021) moved the host from webservices.nextbus.com to retro.umoiq.com.
+  termsOfService: https://retro.umoiq.com/xmlFeedDocs/NextBusXMLFeed.pdf
+  contact:
+    name: Umo IQ Support (Cubic Transportation Systems)
+    email: umoiq.support@cubic.com
+    url: https://retro.umoiq.com/
+  x-license-note: >-
+    The PDF's LICENSE AGREEMENT grants Umo IQ customers a non-exclusive licence to use the
+    feed free of charge, provides no support outside written contracts, and reserves the right
+    to terminate or limit the feed to any user at any time.
+externalDocs:
+  description: Public XML Feed documentation (PDF, revision 1.24)
+  url: https://retro.umoiq.com/xmlFeedDocs/NextBusXMLFeed.pdf
+servers:
+  - url: https://retro.umoiq.com/service
+    description: Umo IQ public feed (production). Formerly http://webservices.nextbus.com/service.
+tags:
+  - name: Public Feed
+    description: The command-driven public feed, in XML and JSON forms.
+paths:
+  /publicXMLFeed:
+    get:
+      tags: [Public Feed]
+      operationId: getPublicXmlFeed
+      summary: Run a public feed command and receive XML
+      description: >-
+        Executes one of the nine documented feed commands and returns XML. The `command`
+        parameter selects the operation; the remaining query parameters are read only by the
+        commands that use them (see each parameter's description). Polling commands
+        (`vehicleLocations`, `predictions`) should be called at most once every 10 seconds.
+        Send `Accept-Encoding: gzip, deflate` to receive compressed responses (50-85% smaller).
+      parameters:
+        - $ref: '#/components/parameters/command'
+        - $ref: '#/components/parameters/agency'
+        - $ref: '#/components/parameters/route'
+        - $ref: '#/components/parameters/stopTag'
+        - $ref: '#/components/parameters/stopId'
+        - $ref: '#/components/parameters/routeTag'
+        - $ref: '#/components/parameters/stops'
+        - $ref: '#/components/parameters/vehicle'
+        - $ref: '#/components/parameters/time'
+        - $ref: '#/components/parameters/useShortTitles'
+        - $ref: '#/components/parameters/terse'
+        - $ref: '#/components/parameters/verbose'
+      responses:
+        '200':
+          description: >-
+            Always HTTP 200. The `<body>` root carries a `copyright` attribute and one of the
+            per-command payloads below, or an `<Error shouldRetry="true|false">` element.
+          headers:
+            Access-Control-Allow-Origin:
+              description: Observed as `*` on every response (2026-09-19).
+              schema:
+                type: string
+          content:
+            text/xml:
+              schema:
+                $ref: '#/components/schemas/XmlBody'
+              examples:
+                agencyList:
+                  summary: command=agencyList
+                  value: |
+                    <body copyright="All data copyright agencies listed below and Umo IQ 2026.">
+                      <agency tag="ttc" title="Toronto Transit Commission" shortTitle="Toronto TTC" regionTitle="Ontario"/>
+                    </body>
+                error:
+                  summary: Unknown command
+                  value: |
+                    <body copyright="All data copyright Toronto Transit Commission 2026.">
+                      <Error shouldRetry="false">"bogus" is an unknown command.</Error>
+                    </body>
+  /publicJSONFeed:
+    get:
+      tags: [Public Feed]
+      operationId: getPublicJsonFeed
+      summary: Run a public feed command and receive JSON
+      description: >-
+        The JSON rendering of the same feed. Accepts exactly the commands and parameters of
+        `/publicXMLFeed`. Every value is serialised as a string (numbers and booleans included),
+        and an element that occurs once is rendered as an object where a repeated element is
+        rendered as an array, so clients must accept both shapes. Documented in the PDF only by
+        reference; the `/publicJSONFeed` path itself was confirmed live on 2026-09-19.
+      parameters:
+        - $ref: '#/components/parameters/command'
+        - $ref: '#/components/parameters/agency'
+        - $ref: '#/components/parameters/route'
+        - $ref: '#/components/parameters/stopTag'
+        - $ref: '#/components/parameters/stopId'
+        - $ref: '#/components/parameters/routeTag'
+        - $ref: '#/components/parameters/stops'
+        - $ref: '#/components/parameters/vehicle'
+        - $ref: '#/components/parameters/time'
+        - $ref: '#/components/parameters/useShortTitles'
+        - $ref: '#/components/parameters/terse'
+        - $ref: '#/components/parameters/verbose'
+      responses:
+        '200':
+          description: >-
+            Always HTTP 200. An object with `copyright` plus one of the per-command payload keys
+            (`agency`, `route`, `predictions`, `vehicle`, `lastTime`) or an `Error` member.
+          headers:
+            Access-Control-Allow-Origin:
+              description: Observed as `*` on every response (2026-09-19).
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JsonBody'
+              examples:
+                agencyList:
+                  summary: command=agencyList
+                  value:
+                    copyright: All data copyright agencies listed below and Umo IQ 2026.
+                    agency:
+                      - tag: ttc
+                        title: Toronto Transit Commission
+                        shortTitle: Toronto TTC
+                        regionTitle: Ontario
+                vehicleLocation:
+                  summary: command=vehicleLocation&a=ttc&v=4592
+                  value:
+                    copyright: All data copyright Toronto Transit Commission 2026.
+                    vehicle:
+                      routeTag: '501'
+                      predictable: 'true'
+                      heading: '253'
+                      speedKmHr: '9'
+                      lon: '-79.3907082'
+                      id: '4592'
+                      dirTag: 501_1_501A
+                      lat: '43.6499993'
+                      secsSinceReport: '3'
+                error:
+                  summary: Unknown command
+                  value:
+                    copyright: All data copyright Toronto Transit Commission 2026.
+                    Error:
+                      shouldRetry: 'false'
+                      content: '"bogus" is an unknown command.'
+components:
+  parameters:
+    command:
+      name: command
+      in: query
+      required: true
+      description: >-
+        The feed command to run. `agencyList` needs no other parameter; every other command
+        requires `a`. routeConfig: optional `r` (all routes, max 100, when omitted), `terse`,
+        `verbose`. predictions: `stopId` (optionally with `routeTag`) OR `r` + `s`.
+        predictionsForMultiStops: `stops` repeated. schedule: `r`. messages: optional `r`
+        repeated. vehicleLocations: `r` + `t`. vehicleLocation: `v`.
+      schema:
+        type: string
+        enum:
+          - agencyList
+          - routeList
+          - routeConfig
+          - predictions
+          - predictionsForMultiStops
+          - schedule
+          - messages
+          - vehicleLocations
+          - vehicleLocation
+    agency:
+      name: a
+      in: query
+      required: false
+      description: Agency tag from `agencyList` (e.g. `ttc`). Required by every command except `agencyList`.
+      schema:
+        type: string
+      example: ttc
+    route:
+      name: r
+      in: query
+      required: false
+      description: >-
+        Route tag from `routeList`. Required by `schedule` and `vehicleLocations`; optional for
+        `routeConfig` (omit for all routes, limited to 100 per request) and `messages` (repeat
+        `r` for several routes); used with `s` by `predictions`.
+      schema:
+        type: string
+      example: '501'
+    stopTag:
+      name: s
+      in: query
+      required: false
+      description: Stop tag from `routeConfig`, used with `r` by `predictions`. Alphanumeric; may carry `_IB`, `_OB` or `_ar` suffixes for larger agencies.
+      schema:
+        type: string
+    stopId:
+      name: stopId
+      in: query
+      required: false
+      description: Numeric stop ID from `routeConfig`, used by `predictions` to get predictions for every route serving the stop. Not every agency assigns stop IDs.
+      schema:
+        type: string
+    routeTag:
+      name: routeTag
+      in: query
+      required: false
+      description: Optional route filter for `predictions` when using `stopId`.
+      schema:
+        type: string
+    stops:
+      name: stops
+      in: query
+      required: false
+      description: For `predictionsForMultiStops`. Repeat once per stop as `<route tag>|<stop tag>` (e.g. `stops=501|472&stops=501|7813`). Maximum 150 stops per route.
+      style: form
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+    vehicle:
+      name: v
+      in: query
+      required: false
+      description: Vehicle id for `vehicleLocation`.
+      schema:
+        type: string
+    time:
+      name: t
+      in: query
+      required: false
+      description: For `vehicleLocations`. Epoch time in milliseconds of the previous call's `lastTime`; `0` returns the last 15 minutes. Maximum timespan 5 minutes.
+      schema:
+        type: string
+    useShortTitles:
+      name: useShortTitles
+      in: query
+      required: false
+      description: When `true`, prediction commands return short agency/route/direction/stop titles where the agency defines them.
+      schema:
+        type: boolean
+    terse:
+      name: terse
+      in: query
+      required: false
+      allowEmptyValue: true
+      description: Flag for `routeConfig` — omit path (map polyline) data, roughly halving the payload.
+      schema:
+        type: boolean
+    verbose:
+      name: verbose
+      in: query
+      required: false
+      allowEmptyValue: true
+      description: Flag for `routeConfig` — include directions with `useForUI="false"`.
+      schema:
+        type: boolean
+  schemas:
+    XmlBody:
+      type: object
+      description: The `<body>` root element of every XML response.
+      xml:
+        name: body
+      properties:
+        copyright:
+          type: string
+          xml:
+            attribute: true
+        Error:
+          $ref: '#/components/schemas/Error'
+        agency:
+          type: array
+          description: Returned by `agencyList`.
+          items:
+            $ref: '#/components/schemas/Agency'
+        route:
+          type: array
+          description: Returned by `routeList` (tag/title only), `routeConfig`, `schedule` and `messages`.
+          items:
+            $ref: '#/components/schemas/Route'
+        predictions:
+          type: array
+          description: Returned by `predictions` and `predictionsForMultiStops`.
+          items:
+            $ref: '#/components/schemas/Predictions'
+        vehicle:
+          type: array
+          description: Returned by `vehicleLocations` and `vehicleLocation`.
+          items:
+            $ref: '#/components/schemas/Vehicle'
+        lastTime:
+          $ref: '#/components/schemas/LastTime'
+    JsonBody:
+      type: object
+      description: >-
+        The JSON rendering. All scalar values are strings. A member that would hold a single
+        element is an object; a repeated element is an array.
+      properties:
+        copyright:
+          type: string
+        Error:
+          oneOf:
+            - $ref: '#/components/schemas/Error'
+            - type: array
+              items:
+                $ref: '#/components/schemas/Error'
+        agency:
+          type: array
+          items:
+            $ref: '#/components/schemas/Agency'
+        route:
+          oneOf:
+            - $ref: '#/components/schemas/Route'
+            - type: array
+              items:
+                $ref: '#/components/schemas/Route'
+        predictions:
+          oneOf:
+            - $ref: '#/components/schemas/Predictions'
+            - type: array
+              items:
+                $ref: '#/components/schemas/Predictions'
+        vehicle:
+          oneOf:
+            - $ref: '#/components/schemas/Vehicle'
+            - type: array
+              items:
+                $ref: '#/components/schemas/Vehicle'
+        lastTime:
+          $ref: '#/components/schemas/LastTime'
+    Error:
+      type: object
+      description: Returned in place of a payload when the request is bad or the agency server is initialising.
+      properties:
+        shouldRetry:
+          type: string
+          description: '`true` when the server was only initialising — retry after 10 seconds. `false` means the URL itself is wrong and retrying will not help.'
+          enum: ['true', 'false']
+          xml:
+            attribute: true
+        content:
+          type: string
+          description: Human-readable message (element text in XML; `content` member in JSON).
+    Agency:
+      type: object
+      properties:
+        tag:
+          type: string
+          description: Agency tag, the `a` parameter for every other command.
+          xml:
+            attribute: true
+        title:
+          type: string
+          xml:
+            attribute: true
+        shortTitle:
+          type: string
+          description: Only present when it differs from `title`.
+          xml:
+            attribute: true
+        regionTitle:
+          type: string
+          xml:
+            attribute: true
+    Route:
+      type: object
+      description: Route summary (`routeList`), full configuration (`routeConfig`), schedule table (`schedule`) or message group (`messages`, where `tag="all"` holds system-wide messages).
+      properties:
+        tag:
+          type: string
+          xml:
+            attribute: true
+        title:
+          type: string
+          xml:
+            attribute: true
+        shortTitle:
+          type: string
+          xml:
+            attribute: true
+        color:
+          type: string
+          description: Route colour, hex without `#` (routeConfig).
+          xml:
+            attribute: true
+        oppositeColor:
+          type: string
+          description: Contrasting colour, black or white (routeConfig).
+          xml:
+            attribute: true
+        latMin:
+          type: string
+          xml:
+            attribute: true
+        latMax:
+          type: string
+          xml:
+            attribute: true
+        lonMin:
+          type: string
+          xml:
+            attribute: true
+        lonMax:
+          type: string
+          xml:
+            attribute: true
+        scheduleClass:
+          type: string
+          description: Current schedule class, e.g. a seasonal schedule name (schedule).
+          xml:
+            attribute: true
+        serviceClass:
+          type: string
+          description: Service day class the schedule applies to (schedule).
+          xml:
+            attribute: true
+        direction:
+          description: Direction list (routeConfig) or the direction name string (schedule).
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                $ref: '#/components/schemas/Direction'
+        stop:
+          type: array
+          items:
+            $ref: '#/components/schemas/Stop'
+        path:
+          type: array
+          description: Map polylines (routeConfig, unless `terse`).
+          items:
+            $ref: '#/components/schemas/Path'
+        header:
+          type: object
+          description: Schedule column header — the ordered stops (schedule).
+          properties:
+            stop:
+              type: array
+              items:
+                $ref: '#/components/schemas/ScheduleStop'
+        tr:
+          type: array
+          description: Schedule rows, one per block (schedule).
+          items:
+            $ref: '#/components/schemas/ScheduleRow'
+        message:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+    Stop:
+      type: object
+      properties:
+        tag:
+          type: string
+          description: Unique alphanumeric stop identifier.
+          xml:
+            attribute: true
+        title:
+          type: string
+          xml:
+            attribute: true
+        shortTitle:
+          type: string
+          xml:
+            attribute: true
+        lat:
+          type: string
+          xml:
+            attribute: true
+        lon:
+          type: string
+          xml:
+            attribute: true
+        stopId:
+          type: string
+          description: Optional numeric ID; may refer to several physical stops (bus bays).
+          xml:
+            attribute: true
+    Direction:
+      type: object
+      properties:
+        tag:
+          type: string
+          xml:
+            attribute: true
+        title:
+          type: string
+          xml:
+            attribute: true
+        name:
+          type: string
+          description: Simplified grouping name such as Inbound/Outbound; not provided by every agency.
+          xml:
+            attribute: true
+        branch:
+          type: string
+          description: Observed on Toronto TTC route configurations (2026-09-19).
+          xml:
+            attribute: true
+        useForUI:
+          type: string
+          enum: ['true', 'false']
+          xml:
+            attribute: true
+        stop:
+          type: array
+          description: Ordered stop references (`tag` only).
+          items:
+            type: object
+            properties:
+              tag:
+                type: string
+                xml:
+                  attribute: true
+    Path:
+      type: object
+      properties:
+        point:
+          type: array
+          items:
+            type: object
+            properties:
+              lat:
+                type: string
+                xml:
+                  attribute: true
+              lon:
+                type: string
+                xml:
+                  attribute: true
+    ScheduleStop:
+      type: object
+      properties:
+        tag:
+          type: string
+          xml:
+            attribute: true
+        content:
+          type: string
+          description: Stop title (element text in XML).
+    ScheduleRow:
+      type: object
+      xml:
+        name: tr
+      properties:
+        blockID:
+          type: string
+          xml:
+            attribute: true
+        stop:
+          type: array
+          items:
+            type: object
+            properties:
+              tag:
+                type: string
+                xml:
+                  attribute: true
+              epochTime:
+                type: string
+                description: Scheduled arrival in epoch milliseconds; `-1` when the trip does not serve the stop.
+                xml:
+                  attribute: true
+              content:
+                type: string
+                description: Time as HH:mm:ss, or `--` when not served.
+    Predictions:
+      type: object
+      properties:
+        agencyTitle:
+          type: string
+          xml:
+            attribute: true
+        routeTag:
+          type: string
+          xml:
+            attribute: true
+        routeCode:
+          type: string
+          xml:
+            attribute: true
+        routeTitle:
+          type: string
+          xml:
+            attribute: true
+        stopTag:
+          type: string
+          xml:
+            attribute: true
+        stopTitle:
+          type: string
+          xml:
+            attribute: true
+        dirTitleBecauseNoPredictions:
+          type: string
+          description: Present only when there are no predictions, so a UI can still show the direction.
+          xml:
+            attribute: true
+        direction:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+                xml:
+                  attribute: true
+              prediction:
+                type: array
+                description: At most 5 predictions per direction.
+                items:
+                  $ref: '#/components/schemas/Prediction'
+        message:
+          type: array
+          items:
+            type: object
+            properties:
+              text:
+                type: string
+                xml:
+                  attribute: true
+    Prediction:
+      type: object
+      properties:
+        seconds:
+          type: string
+          xml:
+            attribute: true
+        minutes:
+          type: string
+          description: Display value; round seconds down.
+          xml:
+            attribute: true
+        epochTime:
+          type: string
+          description: Predicted time in epoch milliseconds.
+          xml:
+            attribute: true
+        isDeparture:
+          type: string
+          enum: ['true', 'false']
+          xml:
+            attribute: true
+        block:
+          type: string
+          xml:
+            attribute: true
+        dirTag:
+          type: string
+          xml:
+            attribute: true
+        tripTag:
+          type: string
+          xml:
+            attribute: true
+        branch:
+          type: string
+          description: Toronto TTC only.
+          xml:
+            attribute: true
+        vehicle:
+          type: string
+          description: Observed on TTC predictions (2026-09-19); not in the PDF.
+          xml:
+            attribute: true
+        affectedByLayover:
+          type: string
+          description: Only present when true.
+          xml:
+            attribute: true
+        isScheduleBased:
+          type: string
+          description: Only present when true.
+          xml:
+            attribute: true
+        delayed:
+          type: string
+          description: Only present when true; a `slowness` attribute may accompany it (experimental).
+          xml:
+            attribute: true
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+          xml:
+            attribute: true
+        creator:
+          type: string
+          xml:
+            attribute: true
+        sendToBuses:
+          type: string
+          xml:
+            attribute: true
+        startBoundary:
+          type: string
+          xml:
+            attribute: true
+        startBoundaryStr:
+          type: string
+          xml:
+            attribute: true
+        endBoundary:
+          type: string
+          xml:
+            attribute: true
+        endBoundaryStr:
+          type: string
+          xml:
+            attribute: true
+        text:
+          type: string
+        textSecondaryLanguage:
+          type: string
+        phonemeText:
+          type: string
+        smsText:
+          type: string
+        priority:
+          type: string
+          description: 1 (highest) to 5; Agence metropolitaine de transport only.
+        routeConfiguredForMessage:
+          type: array
+          items:
+            type: object
+            properties:
+              tag:
+                type: string
+                xml:
+                  attribute: true
+              stop:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Stop'
+        interval:
+          type: array
+          items:
+            type: object
+            properties:
+              startDay:
+                type: string
+                description: 1 = Monday.
+                xml:
+                  attribute: true
+              startTime:
+                type: string
+                description: Seconds past midnight.
+                xml:
+                  attribute: true
+              endDay:
+                type: string
+                xml:
+                  attribute: true
+              endTime:
+                type: string
+                xml:
+                  attribute: true
+    Vehicle:
+      type: object
+      properties:
+        id:
+          type: string
+          xml:
+            attribute: true
+        routeTag:
+          type: string
+          xml:
+            attribute: true
+        dirTag:
+          type: string
+          xml:
+            attribute: true
+        lat:
+          type: string
+          xml:
+            attribute: true
+        lon:
+          type: string
+          xml:
+            attribute: true
+        secsSinceReport:
+          type: string
+          xml:
+            attribute: true
+        predictable:
+          type: string
+          enum: ['true', 'false']
+          xml:
+            attribute: true
+        heading:
+          type: string
+          description: Degrees 0-360; negative when unavailable.
+          xml:
+            attribute: true
+        speedKmHr:
+          type: string
+          xml:
+            attribute: true
+    LastTime:
+      type: object
+      description: Returned by `vehicleLocations`; feed `time` back as `t` on the next poll.
+      properties:
+        time:
+          type: string
+          description: Epoch milliseconds of the newest location returned.
+          xml:
+            attribute: true
+security: []
+x-evidence:
+  verified: '2026-09-19'
+  method: probed
+  host: retro.umoiq.com
+  agency_used: ttc
+  commands:
+    agencyList: 200
+    routeList: 200
+    routeConfig: 200
+    predictions: 200
+    predictionsForMultiStops: 200
+    schedule: 200
+    messages: 200
+    vehicleLocations: 200
+    vehicleLocation: 200
+  forms:
+    - /publicXMLFeed
+    - /publicJSONFeed
+  observed_headers:
+    Access-Control-Allow-Origin: '*'
+    Server: Apache
+    Vary: Accept-Encoding
+  no_rate_limit_headers: true

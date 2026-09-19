@@ -1,0 +1,29 @@
+generated: '2026-09-19'
+method: searched
+source: https://retro.umoiq.com/xmlFeedDocs/NextBusXMLFeed.pdf
+provider: Cubic Corporation
+providerId: cubic
+api: Umo IQ Public Feed API
+published: false
+description: >-
+  Cubic publishes no sandbox, test mode, console or playground for this API — and for this
+  particular API it needs none: the production feed is anonymous, read-only and free, so calling
+  production IS the trial. There are no test keys (there are no keys), no test-vs-live modes, no
+  fixtures, no time simulation. A developer evaluating the feed can call it directly from a
+  browser, which is what the documentation's worked examples do.
+test_mode: false
+key_prefixes: []
+test_data: []
+time_simulation: false
+console: false
+evaluation_path:
+  anonymous_production: true
+  note: >-
+    Start with command=agencyList to get a live agency tag, then use that tag with routeList.
+    Do not copy the documentation's examples verbatim — its example agency sf-muni has left the
+    feed and returns an invalid-agency error (probed 2026-09-19).
+  worked_example: 'https://retro.umoiq.com/service/publicJSONFeed?command=agencyList'
+  worked_example_status: 200
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

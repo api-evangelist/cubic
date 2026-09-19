@@ -4,35 +4,96 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: Cubic Corporation
 providerId: cubic
 created: '2026-05-04'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-04, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-05'
-reconciled: false
+generated: '2026-09-19'
+method: searched
+source: https://retro.umoiq.com/xmlFeedDocs/NextBusXMLFeed.pdf
+modified: '2026-09-19'
+reconciled: true
 tags:
-  - Defense
   - Transportation
+  - Public Transit
   - Rate Limiting
-description: Cubic does not publish public rate-limit documentation. APIs are deployed inside transit
-  and defense systems sized to the contracting agency's operational profile.
+description: >-
+  Cubic publishes real, numeric limits for the Umo IQ Public Feed in its feed documentation
+  (Public XML Feed revision 1.24, section "Limits on Amount of Data"). They are volume and
+  cardinality caps rather than request-per-second quotas, and the API returns NO rate-limit
+  response headers — no X-RateLimit-*, no RateLimit-*, no Retry-After were present on any of
+  the nine commands probed on 2026-09-19, so a client cannot observe its remaining budget at
+  runtime and must self-police against the documented numbers.
 sources:
-  - https://www.cubic.com/
-notes: No public rate-limit documentation. Limits are scoped to the deployed system and project contract.
+  - https://retro.umoiq.com/xmlFeedDocs/NextBusXMLFeed.pdf
+notes: >-
+  The documentation states the limits "could change at any time". Defense and non-Umo Cubic
+  systems are delivered under agency contracts and publish no limits.
+limit_count: 5
 responseCodes:
-  throttled: 429
-  serviceUnavailable: 503
+  throttled: null
+  serviceUnavailable: null
+  note: >-
+    No status code is documented for exhaustion and none was observed. The feed answers HTTP 200
+    to every request and reports failure in an Error element carrying shouldRetry.
+headers:
+  published: false
+  observed: []
+  note: >-
+    Probed 2026-09-19 across agencyList, routeList, routeConfig, predictions,
+    predictionsForMultiStops, schedule, messages, vehicleLocations and vehicleLocation on both
+    the XML and JSON feeds. Response headers were limited to Access-Control-Allow-Origin,
+    Content-Type, Date, Server, Vary, X-Frame-Options, Content-Length and Connection.
 limits:
-  - name: Contract-scoped throughput
-    scope: deployment
-    metric: varies
-    limit: bounded by deployed system capacity per agency contract
+  - name: Characters per requester
+    scope: per-ip
+    metric: characters
+    limit: 2097152
+    window: 20s
     applies:
-      - Cubic Corporation API
+      - Umo IQ Public Feed API
+    source: Public XML Feed rev 1.24, "Limits on Amount of Data"
+  - name: Routes per routeConfig request
+    scope: per-endpoint
+    metric: routes
+    limit: 100
+    applies:
+      - Umo IQ Public Feed API
+    note: Agencies with more than 100 routes require multiple requests.
+  - name: Stops per route for predictionsForMultiStops
+    scope: per-endpoint
+    metric: stops
+    limit: 150
+    applies:
+      - Umo IQ Public Feed API
+  - name: Predictions per stop
+    scope: per-endpoint
+    metric: predictions
+    limit: 5
+    applies:
+      - Umo IQ Public Feed API
+  - name: vehicleLocations timespan
+    scope: per-endpoint
+    metric: minutes
+    limit: 5
+    applies:
+      - Umo IQ Public Feed API
 policies:
-  - name: Backoff Strategy
-    description: Honor Retry-After when present; use exponential backoff with jitter on 429 / 503.
-  - name: Capacity tied to contract
-    description: Throughput envelopes are negotiated as part of the system delivery, not exposed publicly.
+  - name: Polling floor
+    description: >-
+      Polling commands, vehicle locations in particular, must not be called more than once every
+      10 seconds. Stated twice in the documentation, in the licence terms and in the
+      vehicleLocations section.
+  - name: Incremental polling
+    description: >-
+      vehicleLocations returns a lastTime element; feeding its value back as the t parameter
+      returns only reports newer than the last call, which is the documented way to stay inside
+      the 2MB/20s budget.
+  - name: Backoff on initialising agency servers
+    description: >-
+      An Error with shouldRetry="true" means the agency server was initialising; the
+      documentation says to retry the same URL after waiting 10 seconds. shouldRetry="false"
+      means the request itself is wrong and retrying will not help.
+  - name: Compression
+    description: >-
+      Sending Accept-Encoding gzip,deflate reduces payload 50-85% and is the documented way to
+      keep large routeConfig and schedule responses inside the volume cap.
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com

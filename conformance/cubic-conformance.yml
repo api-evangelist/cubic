@@ -1,0 +1,90 @@
+generated: '2026-09-19'
+method: derived
+source: openapi/cubic-umo-iq-public-feed-openapi.yml, https://retro.umoiq.com/xmlFeedDocs/NextBusXMLFeed.pdf
+provider: Cubic Corporation
+providerId: cubic
+api: Umo IQ Public Feed API
+description: >-
+  Cross-cutting and domain standards asserted, or honestly denied, for the Umo IQ Public Feed.
+  This is a pre-standards surface: it predates the transit-data standards its own market now
+  runs on, and it implements none of them. Each entry below is evidenced by the contract or by a
+  live probe, not by a marketing claim.
+conformance:
+  - id: oauth2
+    conforms: false
+    evidence: No securityScheme in the contract; nine commands answered anonymously on 2026-09-19.
+  - id: oidc
+    conforms: false
+    evidence: No /.well-known/openid-configuration on any host — see well-known/cubic-well-known.yml.
+  - id: rfc9457
+    conforms: false
+    evidence: >-
+      Errors are a proprietary Error element with a shouldRetry attribute, returned with HTTP 200.
+      No application/problem+json. See errors/cubic-problem-types.yml.
+  - id: rfc8594
+    conforms: false
+    evidence: No Deprecation or Sunset headers; no deprecation policy published.
+  - id: idempotency
+    conforms: na
+    evidence: Read-only API — no mutating operation exists to make idempotent.
+  - id: pagination
+    conforms: false
+    evidence: >-
+      No pagination of any style. Result size is bounded by documented cardinality caps
+      (100 routes, 150 stops, 5 predictions) and the terse flag.
+  - id: cors
+    conforms: true
+    evidence: 'Access-Control-Allow-Origin: * observed on every probed response, 2026-09-19.'
+  - id: http-compression
+    conforms: true
+    evidence: >-
+      Accept-Encoding gzip,deflate documented in the "Compressing Data" section and Vary
+      Accept-Encoding present on responses.
+  - id: json:api
+    conforms: false
+    evidence: Proprietary JSON rendering of an XML document model; no JSON:API document structure.
+  - id: odata
+    conforms: false
+    evidence: No $metadata surface, no OData query options.
+  - id: scim
+    conforms: false
+    evidence: No identity surface.
+domain_standards_note: >-
+  REWARD-ONLY — the transit-data market does have standards and this contract declares none of
+  them. Recorded as a measured absence, with the probe that establishes it, not as a penalty.
+domain_standards:
+  - id: gtfs
+    name: General Transit Feed Specification (static)
+    conforms: false
+    evidence: >-
+      No GTFS surface is served by this API. The feed's own documentation warns the opposite
+      way — that its stop tags "might not always correspond to GTFS or other configuration data"
+      because of the _IB/_OB duplication scheme — which is an explicit statement of GTFS
+      divergence rather than conformance.
+  - id: gtfs-realtime
+    name: GTFS Realtime (protobuf)
+    conforms: false
+    evidence: >-
+      The feed carries exactly the three GTFS-Realtime entity classes (trip updates as
+      predictions, vehicle positions as vehicleLocations, service alerts as messages) in a
+      proprietary XML/JSON encoding instead of the GTFS-RT protobuf. No .proto, no protobuf
+      media type, no GTFS-RT endpoint found on any host on 2026-09-19. Third-party bridges exist
+      (npm nextbus-to-gtfs-rt) precisely because the provider ships none.
+  - id: siri
+    name: CEN SIRI (Service Interface for Real-time Information)
+    conforms: false
+    evidence: No SIRI service, no SIRI XML namespace, no SIRI request shapes in the contract or documentation.
+  - id: transmodel
+    name: EN 12896 Transmodel / NeTEx
+    conforms: false
+    evidence: The data model is proprietary (agency/route/stop/direction tags); no Transmodel or NeTEx vocabulary appears.
+  - id: ogc-api
+    name: OGC API
+    conforms: false
+    evidence: >-
+      Probed for an OGC surface because the feed serves geospatial data (stop and vehicle
+      lat/lon, route polylines). No /conformance, no /collections, no GetCapabilities on
+      retro.umoiq.com. Coordinates are bare lat/lon string attributes, not GeoJSON.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

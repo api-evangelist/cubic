@@ -1,0 +1,56 @@
+generated: '2026-09-19'
+method: searched
+source: registry.npmjs.org, pypi.org, github.com API
+provider: Cubic Corporation
+providerId: cubic
+description: >-
+  Cubic publishes NO first-party client library for the Umo IQ Public Feed, in any language.
+  Searched on 2026-09-19: npm (text search for umoiq and nextbus), PyPI (umoiq 404), and the
+  github.com/cubic and github.com/umoiq organizations (both 404 — neither exists). The feed
+  documentation names no SDK. What the ecosystem has instead is third-party wrappers written by
+  developers against the old NextBus name; they are listed below as context, explicitly NOT as
+  Cubic packages, and no SDKs pointer is wired in apis.yml because none would be true.
+official_package_count: 0
+packages: []
+third_party:
+  note: >-
+    NOT published by Cubic. Recorded because their existence is the finding: the community had
+    to write its own clients, and several wrap the retired webservices.nextbus.com host rather
+    than retro.umoiq.com.
+  entries:
+    - name: nextbus
+      registry: npm
+      official: false
+      author: elliottsj
+      repository: https://github.com/elliottsj/nextbus-js
+      version: null
+      published: null
+      note: Version metadata not queried per-package; listed only as ecosystem context, not as a Cubic artifact.
+    - name: nextbus-to-gtfs-rt
+      registry: npm
+      official: false
+      author: evansiroky
+      repository: https://github.com/evansiroky/nextbus-to-gtfs-rt
+      version: null
+      published: null
+      note: >-
+        Bridges this feed to GTFS-Realtime. Its existence is direct evidence for the
+        gtfs-realtime absence recorded in conformance/cubic-conformance.yml.
+    - name: nextbus-graphql
+      registry: npm
+      official: false
+      author: elliottsj
+      repository: https://github.com/elliottsj/nextbus-graphql
+      version: null
+      published: null
+    - name: restbus
+      registry: npm
+      official: false
+      author: morganney
+      repository: https://github.com/morganney/restbus
+      version: null
+      published: null
+      note: A REST facade over the command feed.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

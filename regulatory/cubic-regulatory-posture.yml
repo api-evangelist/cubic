@@ -1,0 +1,81 @@
+generated: '2026-09-19'
+method: probed
+source: https://www.cubic.com/sitemap.xml plus live path probes, 2026-09-19
+provider: Cubic Corporation
+providerId: cubic
+description: >-
+  Horizontal regulatory signals — AI, cyber, accessibility, online safety, privacy, product
+  security — harvested, never inferred. The result is an empty signals set, which is the correct
+  and expected outcome for a contract-delivery defense and transit systems integrator with no
+  self-serve product: the commitments a SaaS vendor publishes for buyers (subprocessor tables,
+  DPAs, VPATs, SBOMs, data-residency documentation) are negotiated inside Cubic's agency and
+  government contracts instead of being posted.
+signals: {}
+probes:
+  method_note: >-
+    www.cubic.com sits behind Imperva/Incapsula, which answers HTTP 200 with a bot-challenge page
+    for ANY path — including paths that do not exist. A 200 from this host is therefore worthless
+    as evidence of a page. The site's own Drupal sitemap (1,782 URLs, fetched successfully past
+    the challenge) was used as the authority on what exists, and is cited below.
+  authority:
+    url: https://www.cubic.com/sitemap.xml
+    status: 200
+    content_type: application/xml
+    urls: 1782
+  conventional_paths:
+    - path: /legal/subprocessors
+      status: 200
+      verdict: not-a-page
+      note: Incapsula challenge body; absent from the sitemap.
+    - path: /legal/dpa
+      status: 200
+      verdict: not-a-page
+      note: Incapsula challenge body; absent from the sitemap.
+    - path: /accessibility
+      status: 200
+      verdict: not-a-page
+      note: Incapsula challenge body; absent from the sitemap.
+    - path: /accessibility/vpat
+      status: 200
+      verdict: not-a-page
+      note: Incapsula challenge body; absent from the sitemap.
+    - path: /privacy/requests
+      status: 200
+      verdict: not-a-page
+      note: Incapsula challenge body; absent from the sitemap.
+    - path: /transparency
+      status: 200
+      verdict: not-a-page
+      note: Incapsula challenge body; absent from the sitemap.
+    - path: /security/sbom
+      status: 200
+      verdict: not-a-page
+      note: Incapsula challenge body; absent from the sitemap.
+    - path: /ai/transparency
+      status: 200
+      verdict: not-a-page
+      note: Incapsula challenge body; absent from the sitemap.
+    - path: /.well-known/security.txt
+      status: 404
+      verdict: absent
+      note: An honest 404 — this path is handled by the origin rather than the challenge.
+  artifacts_consulted:
+    - well-known/cubic-well-known.yml (no security.txt on any host, 104 paths probed)
+    - security/cubic-vulnerability-disclosure.yml (probe found none)
+    - security/cubic-trust-center.yml (probe found none)
+    - lifecycle/cubic-lifecycle.yml (no support-period or SLA statement published)
+related_pages_that_do_exist:
+  note: >-
+    These are in the sitemap and are real Cubic pages, but none of them carries the SUBSTANCE a
+    regulatory signal requires — a conformance report, a dated subprocessor table, a named SBOM
+    format, a published GPC commitment. They are recorded as context, deliberately NOT as signals.
+  pages:
+    - url: https://www.cubic.com/privacy-policy
+      relevance: privacy notice
+    - url: https://www.cubic.com/our-company/ethics-compliance
+      relevance: corporate ethics and compliance program
+    - url: https://www.cubic.com/esg
+      relevance: ESG reporting
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

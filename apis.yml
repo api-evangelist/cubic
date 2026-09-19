@@ -30,35 +30,159 @@ tags:
   - Defense
   - Transportation
   - Technology
+  - Public Transit
+  - Fare Collection
+  - Real-Time Data
+  - Vehicle Location
+  - Intelligent Transportation Systems
 description: >-
-  Cubic Corporation is a major US corporation and Fortune 1000 company. The Cubic Corporation API provides programmatic access to its platform services, data, and integrations for enterprise customers and partners.
+  Cubic Corporation is a San Diego defense and public-transportation technology company
+  (Cubic Transportation Systems and Cubic Defense) that delivers fare-collection, traffic
+  management and mission systems under agency and government contracts. Its one publicly
+  documented API is the Umo IQ Public Feed (the former NextBus feed) served by Cubic
+  Transportation Systems at retro.umoiq.com: an anonymous XML/JSON query-command feed of
+  transit agencies, routes, stops, arrival predictions, schedules, service messages and live
+  vehicle locations for the agencies Cubic serves. Cubic's other integration surfaces
+  (GRIDSMART, Trafficware, the Umo agency portal API) sit behind customer logins.
 created: '2026-04-19'
-modified: '2026-04-19'
+modified: '2026-09-19'
 specificationVersion: '0.23'
 apis:
-  - aid: cubic:cubic-api
-    name: Cubic Corporation API
+  - aid: cubic:umo-iq-public-feed
+    name: Umo IQ Public Feed API
     tags:
-      - Defense
       - Transportation
-      - Technology
+      - Public Transit
+      - Real-Time Data
+      - Vehicle Location
+      - Arrival Predictions
     image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-    baseURL: https://api.cubic.com
-    humanURL: https://developer.cubic.com
+    baseURL: https://retro.umoiq.com/service
+    humanURL: https://retro.umoiq.com/
     properties:
-      - url: https://developer.cubic.com/docs
+      - url: openapi/cubic-umo-iq-public-feed-openapi.yml
+        type: OpenAPI
+      - url: https://retro.umoiq.com/xmlFeedDocs/NextBusXMLFeed.pdf
         type: Documentation
+      - url: examples/cubic-umo-iq-public-feed-examples.yml
+        type: Examples
+      - url: overlays/cubic-umo-iq-public-feed-overlay.yaml
+        type: Overlay
+      - url: errors/cubic-problem-types.yml
+        type: ErrorCatalog
+      - url: conventions/cubic-conventions.yml
+        type: Conventions
+      - url: authentication/cubic-authentication.yml
+        type: Authentication
+      - url: rate-limits/cubic-rate-limits.yml
+        type: RateLimits
+      - url: lifecycle/cubic-lifecycle.yml
+        type: Lifecycle
+      - url: changelog/cubic-changelog.yml
+        type: ChangeLog
+      - url: data-model/cubic-data-model.yml
+        type: DataModel
+      - url: conformance/cubic-conformance.yml
+        type: Conformance
+      - url: mcp/cubic-mcp.yml
+        type: X-MCPServerCandidate
     description: >-
-      The Cubic Corporation API provides access to platform services and data for enterprise integration and automation.
+      The Umo IQ Public Feed (formerly the NextBus Public XML Feed, revision 1.24, 18 May 2021)
+      is Cubic Transportation Systems' anonymous, unauthenticated real-time transit feed. A
+      single GET endpoint in XML (/publicXMLFeed) or JSON (/publicJSONFeed) form is driven by a
+      command query parameter: agencyList, routeList, routeConfig, predictions,
+      predictionsForMultiStops, schedule, messages, vehicleLocations and vehicleLocation. It is
+      licensed free of charge to Umo IQ customer agencies and carries published per-IP data
+      limits (2 MB per 20 seconds) and a 10-second polling floor.
+    x-evidence:
+      verified: '2026-09-19'
+      method: probed
+      docs: https://retro.umoiq.com/xmlFeedDocs/NextBusXMLFeed.pdf
+      docs_status: 200
+      docs_content_type: application/pdf
+      ownership: >-
+        retro.umoiq.com's own footer reads "Cubic Transportation Systems, Inc. Proprietary
+        Information", the feed documentation routes support to umoiq.support@cubic.com, and
+        www.cubic.com markets the Umo Mobility Platform as a Cubic Transportation Systems product.
+      commands_probed:
+        - command: agencyList
+          status: 200
+          note: 17 agencies listed (jhu-apl, ccrta, west-hollywood, da, dumbarton-gtfs, escalon, glendale, indianapolis-air, omnitrans, pvpta, portland-sc, roosevelt, stl, ttc, unitrans, ucb, wku)
+        - command: routeList
+          status: 200
+        - command: routeConfig
+          status: 200
+        - command: predictions
+          status: 200
+        - command: predictionsForMultiStops
+          status: 200
+        - command: schedule
+          status: 200
+        - command: messages
+          status: 200
+        - command: vehicleLocations
+          status: 200
+        - command: vehicleLocation
+          status: 200
+      note: >-
+        Every documented command answered on both the XML and JSON feeds against agency ttc on
+        2026-09-19. The documentation's example agency sf-muni is no longer served ("Agency
+        parameter a=sf-muni is not valid"). The feed returns HTTP 200 for every request, including
+        errors, and signals failure in an Error element with a shouldRetry attribute.
 common:
-  - type: DomainSecurity
-    url: security/cubic-domain-security.yml
-  - type: LinkedIn
-    url: https://www.linkedin.com/company/cubic
   - type: Website
     url: https://www.cubic.com
-  - type: LlmsText
-    url: https://developer.cubic.com/llms.txt
+  - type: LinkedIn
+    url: https://www.linkedin.com/company/cubic
+  - type: PrivacyPolicy
+    url: https://www.cubic.com/privacy-policy
+  - type: Leadership
+    url: https://www.cubic.com/about/people/all
+  - type: Newsroom
+    url: https://www.cubic.com/news-events
+  - type: Support
+    url: https://www.cubic.com/support
+  - type: Careers
+    url: https://www.cubic.com/careers
+  - type: DomainSecurity
+    url: security/cubic-domain-security.yml
+  - type: LLMsTxt
+    url: llms/cubic-llms.txt
+  - type: Plans
+    url: plans/cubic-plans-pricing.yml
+  - type: AgentSkill
+    url: skills/_index.yml
+  - type: RegulatoryPosture
+    url: regulatory/cubic-regulatory-posture.yml
+  - type: Conventions
+    url: conventions/cubic-conventions.yml
+  - type: ErrorCatalog
+    url: errors/cubic-problem-types.yml
+  - type: Authentication
+    url: authentication/cubic-authentication.yml
+  - type: RateLimits
+    url: rate-limits/cubic-rate-limits.yml
+  - type: Lifecycle
+    url: lifecycle/cubic-lifecycle.yml
+  - type: ChangeLog
+    url: changelog/cubic-changelog.yml
+  - type: Conformance
+    url: conformance/cubic-conformance.yml
+  - type: DataModel
+    url: data-model/cubic-data-model.yml
+  - type: Examples
+    url: examples/cubic-umo-iq-public-feed-examples.yml
+  - type: Overlay
+    url: overlays/cubic-umo-iq-public-feed-overlay.yaml
+  - type: Sandbox
+    url: sandbox/cubic-sandbox.yml
+  - type: Packages
+    url: packages/cubic-packages.yml
+x-enrichment:
+  date: '2026-09-19'
+  status: enriched
+  artifacts_added: 19
+  pass: local-v3
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com

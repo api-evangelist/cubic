@@ -1,0 +1,436 @@
+generated: '2026-09-19'
+method: probed
+source: live responses from https://retro.umoiq.com/service, captured 2026-09-19
+provider: Cubic Corporation
+providerId: cubic
+api: Umo IQ Public Feed API
+description: Real request/response pairs captured from the live Umo IQ Public Feed. Every body below was returned
+  by the host on 2026-09-19 against agency ttc (Toronto Transit Commission); long arrays are truncated to the first
+  few members and the truncation is marked. Nothing here is invented — these are the provider's own bytes. Use ttc,
+  not the documentation's sf-muni, which no longer resolves.
+examples:
+- name: agencyList
+  description: List the agencies on the feed — the entry point for every other command
+  request:
+    method: GET
+    url: https://retro.umoiq.com/service/publicJSONFeed?command=agencyList
+  response:
+    status: 200
+    content_type: application/json
+    bytes: 1752
+  body:
+    copyright: All data copyright agencies listed below and Umo IQ 2026.
+    agency:
+    - tag: jhu-apl
+      regionTitle: Maryland
+      title: APL
+    - tag: ccrta
+      shortTitle: CCRTA
+      regionTitle: Massachusetts
+      title: Cape Cod Regional Transit Authority
+    - tag: west-hollywood
+      regionTitle: California-Southern
+      title: City of West Hollywood
+  body_truncated: agency[] truncated to 3 of 17 members.
+- name: routeConfig
+  description: Route configuration for TTC route 501, terse (no map paths)
+  request:
+    method: GET
+    url: https://retro.umoiq.com/service/publicJSONFeed?command=routeConfig&a=ttc&r=501&terse
+  response:
+    status: 200
+    content_type: application/json
+    bytes: 17824
+  body:
+    copyright: All data copyright Toronto Transit Commission 2026.
+    route:
+      lonMax: '-79.28172'
+      color: ff0000
+      oppositeColor: ffffff
+      stop:
+      - stopId: '6523'
+        lon: '-79.47873'
+        tag: '472'
+        title: Humber Loop At The Queensway
+        lat: '43.6309999'
+      - stopId: '6916'
+        lon: '-79.47305'
+        tag: '7813'
+        title: The Queensway At South Kingsway
+        lat: '43.63582'
+      - stopId: '14282'
+        lon: '-79.4692'
+        tag: '10266'
+        title: The Queensway At Windermere Ave East Side
+        lat: '43.63726'
+      tag: '501'
+      latMin: '43.6309999'
+      title: 501-Queen
+      latMax: '43.6739099'
+      lonMin: '-79.47873'
+      direction:
+      - stop:
+        - tag: '4143'
+        - tag: '3196'
+        - tag: '15138'
+        name: West
+        useForUI: 'true'
+        tag: 501_1_501A
+        title: West - 501 Queen towards Humber
+        branch: '501'
+      - stop:
+        - tag: '472'
+        - tag: '7813'
+        - tag: '10266'
+        name: East
+        useForUI: 'true'
+        tag: 501_0_501A
+        title: East - 501 Queen towards Neville Park
+        branch: '501'
+  body_truncated: Arrays truncated to the first 3 members for readability; the live response carries more.
+- name: predictions
+  description: Arrival predictions for every route serving stop 6523
+  request:
+    method: GET
+    url: https://retro.umoiq.com/service/publicJSONFeed?command=predictions&a=ttc&stopId=6523
+  response:
+    status: 200
+    content_type: application/json
+    bytes: 1524
+  body:
+    copyright: All data copyright Toronto Transit Commission 2026.
+    predictions:
+    - routeTag: '301'
+      stopTag: '472'
+      routeTitle: 301-Queen
+      agencyTitle: Toronto Transit Commission
+      dirTitleBecauseNoPredictions: East - 301 Queen towards Neville Park
+      stopTitle: Humber Loop At The Queensway
+    - routeTag: '501'
+      stopTag: '472'
+      routeTitle: 501-Queen
+      agencyTitle: Toronto Transit Commission
+      stopTitle: Humber Loop At The Queensway
+      direction:
+        prediction:
+        - seconds: '165'
+          tripTag: '50844760'
+          minutes: '2'
+          isDeparture: 'false'
+          block: '501_25_250'
+          dirTag: 501_1_501A
+          branch: '501'
+          epochTime: '1789841151488'
+          vehicle: '4570'
+        - seconds: '778'
+          tripTag: '50844759'
+          minutes: '12'
+          isDeparture: 'false'
+          block: '501_1_10'
+          dirTag: 501_1_501A
+          branch: '501'
+          epochTime: '1789841764408'
+          vehicle: '4532'
+        - seconds: '1169'
+          tripTag: '50844758'
+          minutes: '19'
+          isDeparture: 'false'
+          block: '501_2_20'
+          dirTag: 501_1_501A
+          branch: '501'
+          epochTime: '1789842155941'
+          vehicle: '4582'
+        title: West - 501 Queen towards Humber
+  body_truncated: Arrays truncated to the first 3 members for readability; the live response carries more.
+- name: vehicleLocations
+  description: Live vehicle positions on TTC 501 for the last 15 minutes
+  request:
+    method: GET
+    url: https://retro.umoiq.com/service/publicJSONFeed?command=vehicleLocations&a=ttc&r=501&t=0
+  response:
+    status: 200
+    content_type: application/json
+    bytes: 4345
+  body:
+    lastTime:
+      time: '1789840958221'
+    copyright: All data copyright Toronto Transit Commission 2026.
+    vehicle:
+    - routeTag: '501'
+      predictable: 'true'
+      heading: '253'
+      speedKmHr: '11'
+      lon: '-79.3902428'
+      id: '4592'
+      dirTag: 501_1_501A
+      lat: '43.6501'
+      secsSinceReport: '28'
+    - routeTag: '501'
+      predictable: 'true'
+      heading: '264'
+      speedKmHr: '0'
+      lon: '-79.4694263'
+      id: '4570'
+      dirTag: 501_1_501A
+      lat: '43.6373075'
+      secsSinceReport: '28'
+    - routeTag: '501'
+      predictable: 'true'
+      heading: '254'
+      speedKmHr: '16'
+      lon: '-79.4216967'
+      id: '4582'
+      dirTag: 501_1_501A
+      lat: '43.6436257'
+      secsSinceReport: '28'
+  body_truncated: Arrays truncated to the first 3 members for readability; the live response carries more.
+- name: messages
+  description: Currently active service messages for TTC
+  request:
+    method: GET
+    url: https://retro.umoiq.com/service/publicJSONFeed?command=messages&a=ttc
+  response:
+    status: 200
+    content_type: application/json
+    bytes: 1876
+  body:
+    copyright: All data copyright Toronto Transit Commission 2026.
+    route:
+    - tag: all
+    - tag: '143'
+      message:
+        routeConfiguredForMessage:
+        - tag: '143'
+        - tag: '144'
+        - tag: '145'
+        sendToBuses: 'false'
+        id: '1508'
+        text: All 140-series Downtown Express routes are reallocated where needed. Visit www.ttc.ca for details
+        priority: Normal
+    - tag: '144'
+      message:
+        routeConfiguredForMessage:
+        - tag: '143'
+        - tag: '144'
+        - tag: '145'
+        sendToBuses: 'false'
+        id: '1508'
+        text: All 140-series Downtown Express routes are reallocated where needed. Visit www.ttc.ca for details
+        priority: Normal
+  body_truncated: Arrays truncated to the first 3 members for readability; the live response carries more.
+- name: schedule
+  description: Published timetable for TTC 501 (1.19 MB full response)
+  request:
+    method: GET
+    url: https://retro.umoiq.com/service/publicJSONFeed?command=schedule&a=ttc&r=501
+  response:
+    status: 200
+    content_type: application/json
+    bytes: 1309683
+  body:
+    copyright: All data copyright Toronto Transit Commission 2026.
+    route:
+    - scheduleClass: ITP2026Sep
+      serviceClass: LABDAY
+      header:
+        stop:
+        - tag: '472'
+          content: Humber Loop At The Queensway
+        - tag: '8941'
+          content: The Queensway At Glendale Ave East Side - St Joseph'S Health Centre
+        - tag: '24707'
+          content: Queen St West At Roncesvalles Ave East Side
+      tag: '501'
+      title: 501-Queen
+      tr:
+      - blockID: '501_1_10'
+        stop:
+        - tag: '472'
+          epochTime: '-1'
+          content: --
+        - tag: '8941'
+          epochTime: '-1'
+          content: --
+        - tag: '24707'
+          epochTime: '14340000'
+          content: 03:59:00
+      - blockID: '501_4_40'
+        stop:
+        - tag: '472'
+          epochTime: '-1'
+          content: --
+        - tag: '8941'
+          epochTime: '-1'
+          content: --
+        - tag: '24707'
+          epochTime: '14820000'
+          content: 04:07:00
+      - blockID: '501_5_50'
+        stop:
+        - tag: '472'
+          epochTime: '-1'
+          content: --
+        - tag: '8941'
+          epochTime: '-1'
+          content: --
+        - tag: '24707'
+          epochTime: '15300000'
+          content: 04:15:00
+      direction: East
+    - scheduleClass: ITP2026Sep
+      serviceClass: LABDAY
+      header:
+        stop:
+        - tag: '4143'
+          content: Queen St East At Neville Park Blvd
+        - tag: 13684_IB
+          content: Queen St.e. At Wineva Ave.
+        - tag: '4034'
+          content: Queen St East At Coxwell Ave
+      tag: '501'
+      title: 501-Queen
+      tr:
+      - blockID: '501_12_120'
+        stop:
+        - tag: '4143'
+          epochTime: '-1'
+          content: --
+        - tag: 13684_IB
+          epochTime: '-1'
+          content: --
+        - tag: '4034'
+          epochTime: '-1'
+          content: --
+      - blockID: '501_13_130'
+        stop:
+        - tag: '4143'
+          epochTime: '-1'
+          content: --
+        - tag: 13684_IB
+          epochTime: '-1'
+          content: --
+        - tag: '4034'
+          epochTime: '-1'
+          content: --
+      - blockID: '501_15_150'
+        stop:
+        - tag: '4143'
+          epochTime: '-1'
+          content: --
+        - tag: 13684_IB
+          epochTime: '-1'
+          content: --
+        - tag: '4034'
+          epochTime: '-1'
+          content: --
+      direction: West
+    - scheduleClass: ITP2026Sep
+      serviceClass: wkd
+      header:
+        stop:
+        - tag: '472'
+          content: Humber Loop At The Queensway
+        - tag: '8941'
+          content: The Queensway At Glendale Ave East Side - St Joseph'S Health Centre
+        - tag: '24707'
+          content: Queen St West At Roncesvalles Ave East Side
+      tag: '501'
+      title: 501-Queen
+      tr:
+      - blockID: '501_14_140'
+        stop:
+        - tag: '472'
+          epochTime: '-1'
+          content: --
+        - tag: '8941'
+          epochTime: '-1'
+          content: --
+        - tag: '24707'
+          epochTime: '13740000'
+          content: 03:49:00
+      - blockID: '501_15_150'
+        stop:
+        - tag: '472'
+          epochTime: '-1'
+          content: --
+        - tag: '8941'
+          epochTime: '-1'
+          content: --
+        - tag: '24707'
+          epochTime: '14340000'
+          content: 03:59:00
+      - blockID: '501_17_170'
+        stop:
+        - tag: '472'
+          epochTime: '-1'
+          content: --
+        - tag: '8941'
+          epochTime: '-1'
+          content: --
+        - tag: '24707'
+          epochTime: '14940000'
+          content: 04:09:00
+      direction: East
+  body_truncated: Arrays truncated to the first 3 members for readability; the live response carries more.
+- name: error
+  description: An unknown command — note HTTP 200 with an Error member
+  request:
+    method: GET
+    url: https://retro.umoiq.com/service/publicJSONFeed?command=bogus&a=ttc
+  response:
+    status: 200
+    content_type: application/json
+    bytes: 150
+  body:
+    copyright: All data copyright Toronto Transit Commission 2026.
+    Error:
+      shouldRetry: 'false'
+      content: '"bogus" is an unknown command.'
+- name: agencyList-xml
+  description: The XML form of the same command
+  request:
+    method: GET
+    url: https://retro.umoiq.com/service/publicXMLFeed?command=agencyList
+  response:
+    status: 200
+    content_type: text/xml
+    bytes: 1696
+  body_xml: "<?xml version=\"1.0\" encoding=\"utf-8\" ?> \n<body copyright=\"All data copyright agencies listed\
+    \ below and Umo IQ 2026.\">\n<agency tag=\"jhu-apl\" title=\"APL\" regionTitle=\"Maryland\"/>\n<agency tag=\"\
+    ccrta\" title=\"Cape Cod Regional Transit Authority\" shortTitle=\"CCRTA\" regionTitle=\"Massachusetts\"/>\n\
+    <agency tag=\"west-hollywood\" title=\"City of West Hollywood\" regionTitle=\"California-Southern\"/>\n<agency\
+    \ tag=\"da\" title=\"Downtown Connection\" regionTitle=\"New York\"/>\n<agency tag=\"dumbarton-gtfs\" title=\"\
+    Dumbarton Express\" shortTitle=\"Dumbarton Exp\" regionTitle=\"California-Northern\"/>\n<agency tag=\"escalon\"\
+    \ title=\"Escalon eTrans\" shortTitle=\"eTrans\" regionTitle=\"California-Northern\"/>\n<agency tag=\"glendale\"\
+    \ title=\"Glendale Beeline\" regionTitle=\"California-Southern\"/>\n<agency tag=\"indianapolis-air\" title=\"\
+    Indianapolis International Airport\" regionTitle=\"Indiana\"/>\n<agency tag=\"omnitrans\" title=\"Omnitrans\"\
+    \ regionTitle=\"California-Southern\"/>\n<agency tag=\"pvpta\" title=\"Palos Verdes Transit\" regionTitle=\"\
+    California-Southern\"/>\n<agency tag=\"portland-sc\" title=\"Portland Streetcar\" regionTitle=\"Oregon\"/>\n\
+    <agency tag=\"roosevelt\" title=\"Roosevelt Island\" regionTitle=\"New York\"/>\n<agency tag=\"stl\" title=\"\
+    Societe de transport de Laval\" shortTitle=\"Laval\" regionTitle=\"Quebec\"/>\n<agency tag=\"ttc\" title=\"\
+    Toronto Transit Commission\" shortTitle=\"Toronto TTC\" regionTitle=\"Ontario\"/>\n<agency tag=\"unitrans\"\
+    \ title=\"Unitrans ASUCD/City of Davis\" shortTitle=\"Unitrans\" regionTitle=\"California-Northern\"/>\n<agency\
+    \ tag=\"ucb\" title=\"University of California Berkeley\" shortTitle=\"UC Berkeley\" regionTitle=\"California-Northern\"\
+    />\n<agency tag=\"wku\" title=\"Western Kentucky University\" regionTitle=\"Kentucky\"/>\n</body>\n"
+- name: predictions-xml
+  description: Predictions in XML, showing the direction/prediction nesting
+  request:
+    method: GET
+    url: https://retro.umoiq.com/service/publicXMLFeed?command=predictions&a=ttc&r=501&s=472
+  response:
+    status: 200
+    content_type: text/xml
+    bytes: 1226
+  body_xml: "<?xml version=\"1.0\" encoding=\"utf-8\" ?> \n<body copyright=\"All data copyright Toronto Transit\
+    \ Commission 2026.\">\n<predictions agencyTitle=\"Toronto Transit Commission\" routeTitle=\"501-Queen\" routeTag=\"\
+    501\" stopTitle=\"Humber Loop At The Queensway\" stopTag=\"472\">\n  <direction title=\"West - 501 Queen towards\
+    \ Humber\">\n  <prediction epochTime=\"1789841151488\" seconds=\"171\" minutes=\"2\" isDeparture=\"false\" branch=\"\
+    501\" dirTag=\"501_1_501A\" vehicle=\"4570\" block=\"501_25_250\" tripTag=\"50844760\" />\n  <prediction epochTime=\"\
+    1789841764408\" seconds=\"784\" minutes=\"13\" isDeparture=\"false\" branch=\"501\" dirTag=\"501_1_501A\" vehicle=\"\
+    4532\" block=\"501_1_10\" tripTag=\"50844759\" />\n  <prediction epochTime=\"1789842155941\" seconds=\"1176\"\
+    \ minutes=\"19\" isDeparture=\"false\" branch=\"501\" dirTag=\"501_1_501A\" vehicle=\"4582\" block=\"501_2_20\"\
+    \ tripTag=\"50844758\" />\n  <prediction epochTime=\"1789842482980\" seconds=\"1503\" minutes=\"25\" isDeparture=\"\
+    false\" branch=\"501\" dirTag=\"501_1_501A\" vehicle=\"4562\" block=\"501_3_30\" tripTag=\"50844757\" />\n \
+    \ <prediction epochTime=\"1789843090763\" seconds=\"2110\" minutes=\"35\" isDeparture=\"false\" branch=\"501\"\
+    \ dirTag=\"501_1_501A\" vehicle=\"4592\" block=\"501_4_40\" tripTag=\"50844756\" />\n  </direction>\n</predictions>\n\
+    </body>\n"

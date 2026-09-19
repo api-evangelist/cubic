@@ -1,0 +1,55 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements — Umo IQ Public Feed
+  version: 1.0.0
+  x-generated: '2026-09-19'
+  x-method: generated
+  x-source: >-
+    API Evangelist enrichment pass, 2026-09-19. Captures what this pipeline added on top of what
+    Cubic publishes, so the additions stay separable from the provider's own documentation.
+extends: ../openapi/cubic-umo-iq-public-feed-openapi.yml
+x-note: >-
+  Cubic publishes this API as a PDF only, so there is no provider-authored OpenAPI for this
+  overlay to sit on top of; the base document was itself written by API Evangelist from that PDF
+  (see its x-apievangelist block). This overlay therefore records the REFINEMENTS made after the
+  PDF was transcribed — every one of them established by calling the live host on 2026-09-19,
+  none of them present in the provider's documentation.
+actions:
+  - target: $.info
+    description: Record that the live surface was exercised, and which observations came from the wire rather than the PDF.
+    update:
+      x-verified-against-live-host: '2026-09-19'
+      x-observations-not-in-published-docs:
+        - The /publicJSONFeed path is live and accepts every documented command; the PDF documents only the XML feed.
+        - 'Access-Control-Allow-Origin: * is returned on every response, making the feed usable directly from a browser.'
+        - No rate-limit response headers are emitted, despite published numeric limits.
+        - The documented example agency sf-muni no longer resolves; agencies leave the feed with no deprecation signal.
+  - target: $.paths['/publicJSONFeed']
+    description: The JSON feed is undocumented in the PDF; mark how it was established.
+    update:
+      x-discovery: probed
+      x-discovery-note: >-
+        Confirmed live on 2026-09-19 by running all nine commands against /publicJSONFeed and
+        comparing the payloads with the XML feed.
+  - target: $.components.schemas.Prediction.properties.vehicle
+    description: The vehicle attribute on a prediction is served but is not in the published documentation.
+    update:
+      x-observed-not-documented: true
+      x-observed-on: 'Toronto TTC, 2026-09-19'
+  - target: $.components.schemas.Direction.properties.branch
+    description: branch appears on TTC route configurations, not only on predictions as the PDF states.
+    update:
+      x-observed-not-documented: true
+      x-observed-on: 'Toronto TTC routeConfig, 2026-09-19'
+  - target: $.components.schemas.JsonBody
+    description: Flag the cardinality and typing traps that the JSON rendering introduces.
+    update:
+      x-client-warning: >-
+        A member holding one element is an object and the same member holding several is an array;
+        all scalars are strings. Both behaviours were observed live and neither is documented.
+  - target: $.components.schemas.Error
+    description: Record the array-shaped error observed on the JSON feed.
+    update:
+      x-observed-anomaly: >-
+        command=routeList with an invalid agency returned an ARRAY of two identical Error objects
+        on /publicJSONFeed, where /publicXMLFeed returned one (2026-09-19).

@@ -1,0 +1,140 @@
+generated: '2026-09-19'
+method: derived
+source: openapi/cubic-umo-iq-public-feed-openapi.yml
+provider: Cubic Corporation
+providerId: cubic
+status: candidate
+description: >-
+  Cubic ships NO MCP server. This is a DERIVED CANDIDATE tool list, computed from the commands
+  of the Umo IQ Public Feed, recording what an MCP server over this API would expose if anyone
+  built one. It is not a surface an agent can call today. Searched on 2026-09-19: no hosted MCP
+  endpoint on any Cubic or Umo host, no @cubic / @umoiq package on npm or PyPI, no MCP mention in
+  the feed documentation, and no /.well-known/oauth-protected-resource anywhere (see
+  well-known/cubic-well-known.yml).
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: none
+  verified: derived
+  note: >-
+    mode is none because nobody ships a server — neither remote nor local-stdio. The underlying
+    API itself needs no auth, so a server built over it would need none either.
+search_performed:
+  date: '2026-09-19'
+  checked:
+    - npm registry search for umoiq / nextbus (only third-party clients, none MCP)
+    - PyPI for umoiq (404)
+    - github.com/cubic and github.com/umoiq organizations (404)
+    - the feed documentation PDF (no MCP reference)
+    - '/.well-known/* on 8 hosts (no oauth-protected-resource, no ai-plugin.json)'
+candidate_tools:
+  - name: list_transit_agencies
+    description: List the transit agencies served by the Umo IQ public feed.
+    rest: getPublicJsonFeed
+    command: agencyList
+    inputSchema:
+      type: object
+      properties: {}
+  - name: list_routes
+    description: List the routes for one agency.
+    rest: getPublicJsonFeed
+    command: routeList
+    inputSchema:
+      type: object
+      required: [a]
+      properties:
+        a:
+          type: string
+          description: Agency tag from list_transit_agencies.
+  - name: get_route_config
+    description: Get stops, directions and map paths for a route (or every route of an agency).
+    rest: getPublicJsonFeed
+    command: routeConfig
+    inputSchema:
+      type: object
+      required: [a]
+      properties:
+        a: {type: string}
+        r: {type: string, description: Route tag; omit for all routes, max 100.}
+        terse: {type: boolean, description: Drop map path data.}
+        verbose: {type: boolean, description: Include directions not flagged for UI.}
+  - name: get_arrival_predictions
+    description: Get upcoming arrival or departure predictions for a stop.
+    rest: getPublicJsonFeed
+    command: predictions
+    inputSchema:
+      type: object
+      required: [a]
+      properties:
+        a: {type: string}
+        stopId: {type: string, description: Numeric stop id — returns every route serving the stop.}
+        r: {type: string, description: Route tag, used with s.}
+        s: {type: string, description: Stop tag, used with r.}
+        routeTag: {type: string, description: Optional route filter when using stopId.}
+        useShortTitles: {type: boolean}
+  - name: get_predictions_for_stops
+    description: Get predictions for several route/stop pairs in one call.
+    rest: getPublicJsonFeed
+    command: predictionsForMultiStops
+    inputSchema:
+      type: object
+      required: [a, stops]
+      properties:
+        a: {type: string}
+        stops:
+          type: array
+          items: {type: string, description: '<route tag>|<stop tag>'}
+        useShortTitles: {type: boolean}
+  - name: get_route_schedule
+    description: Get the published timetable for a route.
+    rest: getPublicJsonFeed
+    command: schedule
+    inputSchema:
+      type: object
+      required: [a, r]
+      properties:
+        a: {type: string}
+        r: {type: string}
+  - name: get_service_messages
+    description: Get currently active service messages for an agency or specific routes.
+    rest: getPublicJsonFeed
+    command: messages
+    inputSchema:
+      type: object
+      required: [a]
+      properties:
+        a: {type: string}
+        r:
+          type: array
+          items: {type: string}
+  - name: get_vehicle_locations
+    description: Get live vehicle positions on a route since a timestamp.
+    rest: getPublicJsonFeed
+    command: vehicleLocations
+    inputSchema:
+      type: object
+      required: [a, r, t]
+      properties:
+        a: {type: string}
+        r: {type: string}
+        t: {type: string, description: Previous lastTime in epoch ms; 0 for the last 15 minutes.}
+  - name: get_vehicle_location
+    description: Get the current position of one vehicle.
+    rest: getPublicJsonFeed
+    command: vehicleLocation
+    inputSchema:
+      type: object
+      required: [a, v]
+      properties:
+        a: {type: string}
+        v: {type: string}
+agent_notes:
+  - Poll no more than once every 10 seconds; the provider states this twice.
+  - Every response is HTTP 200 — check for an Error member, not a status code.
+  - In JSON, a single result is an object and several are an array; handle both.
+  - All values are strings, including coordinates, booleans and epoch milliseconds.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

@@ -1,0 +1,520 @@
+# Negative probe result — recorded deliberately. A recorded absence is valid data.
+generated: '2026-09-19'
+method: probed
+source: live GET probes of /.well-known/* and adjacent discovery paths on every host this record knows
+note: 'No host serves a real well-known document. Every 200 in this probe is a shell, not a document:
+  www.cubic.com and cubic.com answer /.well-known/* with an Imperva/Incapsula bot-challenge page, umoiq.com,
+  www.umoiq.com and rider.umoiq.com are Angular single-page apps whose catch-all returns the app shell
+  for any path, and retro.umoiq.com returns its own HTML 404 page with a 200. api.umoiq.com is the only
+  host that answers honestly, with a JSON 404. No WellKnown or SecurityTxt pointer is wired in apis.yml,
+  because none would be true.'
+hosts:
+- host: www.cubic.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    content_type: text/html
+    file: null
+  - path: /security.txt
+    status: 404
+    content_type: text/html
+    file: null
+  - path: /.well-known/openid-configuration
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/api-catalog
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/ai-plugin.json
+    status: 302
+    content_type: text/html
+    file: null
+    note: redirects to https://www.cubic.com/page-not-found
+  - path: /.well-known/agent-card.json
+    status: 302
+    content_type: text/html
+    file: null
+    note: redirects to https://www.cubic.com/page-not-found
+  - path: /.well-known/agent.json
+    status: 302
+    content_type: text/html
+    file: null
+    note: redirects to https://www.cubic.com/page-not-found
+  - path: /llms.txt
+    status: 404
+    content_type: text/html
+    file: null
+  - path: /openapi.json
+    status: 302
+    content_type: text/html
+    file: null
+    note: redirects to https://www.cubic.com/page-not-found
+  - path: /swagger.json
+    status: 302
+    content_type: text/html
+    file: null
+    note: redirects to https://www.cubic.com/page-not-found
+  - path: /api-docs
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+- host: cubic.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 301
+    content_type: text/html
+    file: null
+    note: redirects to http://www.cubic.com/.well-known/security.txt
+  - path: /security.txt
+    status: 301
+    content_type: text/html
+    file: null
+    note: redirects to http://www.cubic.com/security.txt
+  - path: /.well-known/openid-configuration
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/api-catalog
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/ai-plugin.json
+    status: 301
+    content_type: text/html
+    file: null
+    note: redirects to http://www.cubic.com/.well-known/ai-plugin.json
+  - path: /.well-known/agent-card.json
+    status: 301
+    content_type: text/html
+    file: null
+    note: redirects to http://www.cubic.com/.well-known/agent-card.json
+  - path: /.well-known/agent.json
+    status: 301
+    content_type: text/html
+    file: null
+    note: redirects to http://www.cubic.com/.well-known/agent.json
+  - path: /llms.txt
+    status: 301
+    content_type: text/html
+    file: null
+    note: redirects to http://www.cubic.com/llms.txt
+  - path: /openapi.json
+    status: 301
+    content_type: text/html
+    file: null
+    note: redirects to http://www.cubic.com/openapi.json
+  - path: /swagger.json
+    status: 301
+    content_type: text/html
+    file: null
+    note: redirects to http://www.cubic.com/swagger.json
+  - path: /api-docs
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+- host: retro.umoiq.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /security.txt
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/openid-configuration
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/api-catalog
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/agent.json
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /llms.txt
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /openapi.json
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /swagger.json
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /api-docs
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+- host: umoiq.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /security.txt
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/openid-configuration
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/api-catalog
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/agent.json
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /llms.txt
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /openapi.json
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /swagger.json
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /api-docs
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+- host: www.umoiq.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /security.txt
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/openid-configuration
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/api-catalog
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/agent.json
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /llms.txt
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /openapi.json
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /swagger.json
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /api-docs
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+- host: umomobility.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    content_type: text/html
+    file: null
+  - path: /security.txt
+    status: 404
+    content_type: text/html
+    file: null
+  - path: /.well-known/openid-configuration
+    status: 404
+    content_type: text/html
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 301
+    content_type: text/html
+    file: null
+    note: redirects to https://umomobility.com/.well-known/oauth-authorization-server/
+  - path: /.well-known/oauth-protected-resource
+    status: 301
+    content_type: text/html
+    file: null
+    note: redirects to https://umomobility.com/.well-known/oauth-protected-resource/
+  - path: /.well-known/api-catalog
+    status: 404
+    content_type: text/html
+    file: null
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    content_type: text/html
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 404
+    content_type: text/html
+    file: null
+  - path: /.well-known/agent.json
+    status: 404
+    content_type: text/html
+    file: null
+  - path: /llms.txt
+    status: 404
+    content_type: text/html
+    file: null
+  - path: /openapi.json
+    status: 404
+    content_type: text/html
+    file: null
+  - path: /swagger.json
+    status: 404
+    content_type: text/html
+    file: null
+  - path: /api-docs
+    status: 404
+    content_type: text/html
+    file: null
+- host: api.umoiq.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    content_type: application/json
+    file: null
+  - path: /security.txt
+    status: 404
+    content_type: application/json
+    file: null
+  - path: /.well-known/openid-configuration
+    status: 404
+    content_type: application/json
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    content_type: application/json
+    file: null
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+    content_type: application/json
+    file: null
+  - path: /.well-known/api-catalog
+    status: 404
+    content_type: application/json
+    file: null
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    content_type: application/json
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 404
+    content_type: application/json
+    file: null
+  - path: /.well-known/agent.json
+    status: 404
+    content_type: application/json
+    file: null
+  - path: /llms.txt
+    status: 404
+    content_type: application/json
+    file: null
+  - path: /openapi.json
+    status: 404
+    content_type: application/json
+    file: null
+  - path: /swagger.json
+    status: 404
+    content_type: application/json
+    file: null
+  - path: /api-docs
+    status: 404
+    content_type: application/json
+    file: null
+- host: rider.umoiq.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /security.txt
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/openid-configuration
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/api-catalog
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /.well-known/agent.json
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /llms.txt
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /openapi.json
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /swagger.json
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.
+  - path: /api-docs
+    status: 200
+    content_type: text/html
+    file: null
+    note: HTTP 200 returning an HTML shell, not a document — recorded as a miss.

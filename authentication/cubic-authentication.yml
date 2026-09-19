@@ -1,0 +1,44 @@
+generated: '2026-09-19'
+method: probed
+source: https://retro.umoiq.com/xmlFeedDocs/NextBusXMLFeed.pdf
+provider: Cubic Corporation
+providerId: cubic
+description: >-
+  Authentication posture for the one Cubic API with public documentation. The Umo IQ Public
+  Feed requires no credential of any kind — no key, no token, no header, no signed request.
+  Access control is contractual rather than technical: the feed's licence grants use to Umo IQ
+  customer agencies and reserves the right to terminate or limit access, but the endpoint itself
+  is open to anonymous callers and enforces only per-IP volume limits.
+apis:
+  - name: Umo IQ Public Feed API
+    baseURL: https://retro.umoiq.com/service
+    scheme: none
+    anonymous: true
+    schemes: []
+    note: >-
+      Confirmed 2026-09-19: nine commands were called on both /publicXMLFeed and /publicJSONFeed
+      with no Authorization header and no API key, and all nine returned data (HTTP 200). No
+      WWW-Authenticate challenge, no 401, no key-issuance flow is documented in the PDF.
+    x-evidence:
+      verified: '2026-09-19'
+      probe: 'GET https://retro.umoiq.com/service/publicJSONFeed?command=agencyList'
+      status: 200
+      auth_headers_sent: none
+oauth2: false
+openIdConnect: false
+mutualTLS: false
+apiKey: false
+gated_surfaces:
+  - name: Umo IQ agency portal
+    url: https://rider.umoiq.com/
+    note: >-
+      Agency-facing portal behind a login; the Umo IQ Portal User Guide is published as a PDF but
+      no machine-readable contract or public auth documentation was found.
+  - name: GRIDSMART API
+    url: https://support.gridsmart.com/support/solutions/articles/69000340533-gridsmart-api
+    note: >-
+      Documented on Cubic's Freshdesk support portal; probed 2026-09-19 and 302s to
+      https://support.gridsmart.com/support/login, so the auth model is not publicly readable.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

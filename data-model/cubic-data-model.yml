@@ -1,0 +1,166 @@
+generated: '2026-09-19'
+method: derived
+source: openapi/cubic-umo-iq-public-feed-openapi.yml
+provider: Cubic Corporation
+providerId: cubic
+api: Umo IQ Public Feed API
+description: >-
+  Entity-relationship graph for the Umo IQ Public Feed, derived from the schema components of
+  the repo's OpenAPI and from the live responses those schemas were checked against. The model
+  is a classic transit hierarchy — agency owns routes, routes own stops and directions, and
+  everything time-varying (predictions, vehicles, messages, schedules) hangs off a route or a
+  stop. Identifiers are agency-scoped strings ("tags"), not global ids.
+identifiers:
+  - name: agency tag
+    example: ttc
+    scope: global
+    obtained_from: agencyList
+    note: The a parameter on every other command.
+  - name: route tag
+    example: '501'
+    scope: per-agency
+    obtained_from: routeList
+  - name: stop tag
+    example: '472'
+    scope: per-agency
+    obtained_from: routeConfig
+    note: >-
+      Alphanumeric even where it looks numeric. Larger agencies append _IB / _OB for a stop
+      duplicated across directions and _ar for an arrival at end of route, so a stop tag may not
+      match the agency's GTFS ids.
+  - name: stopId
+    example: '6523'
+    scope: per-agency
+    obtained_from: routeConfig
+    note: >-
+      Optional and NOT unique — one stopId can name several physical stops such as the bays of a
+      terminal. Intended for phone and SMS input. Not every agency assigns them.
+  - name: vehicle id
+    example: '4592'
+    scope: per-agency
+    obtained_from: vehicleLocations
+  - name: dirTag
+    example: 501_1_501A
+    scope: per-route
+    note: A trip-pattern id, reused across block assignments. Distinct from tripTag.
+  - name: tripTag
+    example: '50844760'
+    scope: per-agency
+    note: Identifies one trip within a block assignment. Present only when the agency configures trip ids.
+  - name: blockID
+    example: 501_25_250
+    scope: per-agency
+entities:
+  - name: Agency
+    description: A transit agency served by the feed. 17 were listed on 2026-09-19.
+    key: tag
+    fields: [tag, title, shortTitle, regionTitle]
+  - name: Route
+    description: A route within an agency; also the carrier of schedule tables and message groups.
+    key: tag
+    fields: [tag, title, shortTitle, color, oppositeColor, latMin, latMax, lonMin, lonMax, scheduleClass, serviceClass]
+  - name: Stop
+    description: A physical stop with a location.
+    key: tag
+    fields: [tag, title, shortTitle, lat, lon, stopId]
+  - name: Direction
+    description: A trip pattern on a route with an ordered stop list; useForUI marks the ones worth showing a passenger.
+    key: tag
+    fields: [tag, title, name, branch, useForUI]
+  - name: Path
+    description: An unordered polyline of points for drawing the route on a map. Several per route, sometimes overlapping.
+    fields: [point]
+  - name: Predictions
+    description: The prediction set for one stop (optionally filtered to one route), grouped by direction.
+    fields: [agencyTitle, routeTag, routeCode, routeTitle, stopTag, stopTitle, dirTitleBecauseNoPredictions]
+  - name: Prediction
+    description: One predicted arrival or departure. At most five per direction.
+    fields: [seconds, minutes, epochTime, isDeparture, block, dirTag, tripTag, branch, vehicle, affectedByLayover, isScheduleBased, delayed]
+  - name: Vehicle
+    description: A GPS position report for one vehicle.
+    key: id
+    fields: [id, routeTag, dirTag, lat, lon, secsSinceReport, predictable, heading, speedKmHr]
+  - name: Message
+    description: An active service message, agency-wide (route tag "all") or targeted at routes and stops.
+    key: id
+    fields: [id, creator, sendToBuses, startBoundary, endBoundary, text, textSecondaryLanguage, phonemeText, smsText, priority]
+  - name: ScheduleRow
+    description: One scheduled trip, a row of stop times keyed by block.
+    key: blockID
+    fields: [blockID, stop]
+  - name: LastTime
+    description: Watermark returned by vehicleLocations for incremental polling.
+    fields: [time]
+relationships:
+  - from: Agency
+    to: Route
+    type: has_many
+    via: a parameter (routeList, routeConfig)
+  - from: Route
+    to: Stop
+    type: has_many
+    via: routeConfig stop list
+  - from: Route
+    to: Direction
+    type: has_many
+    via: routeConfig direction list
+  - from: Route
+    to: Path
+    type: has_many
+    via: routeConfig path list (suppressed by terse)
+  - from: Direction
+    to: Stop
+    type: has_many
+    via: ordered stop tag references
+  - from: Stop
+    to: Predictions
+    type: has_many
+    via: stop tag or stopId
+  - from: Predictions
+    to: Prediction
+    type: has_many
+    via: direction grouping
+  - from: Prediction
+    to: Vehicle
+    type: belongs_to
+    via: vehicle attribute (observed on TTC)
+  - from: Prediction
+    to: Direction
+    type: belongs_to
+    via: dirTag
+  - from: Vehicle
+    to: Route
+    type: belongs_to
+    via: routeTag
+  - from: Vehicle
+    to: Direction
+    type: belongs_to
+    via: dirTag
+  - from: Route
+    to: Message
+    type: has_many
+    via: messages command; route tag "all" holds agency-wide messages
+  - from: Message
+    to: Stop
+    type: has_many
+    via: routeConfiguredForMessage stop list
+  - from: Route
+    to: ScheduleRow
+    type: has_many
+    via: schedule command tr rows
+  - from: ScheduleRow
+    to: Stop
+    type: has_many
+    via: stop tag with epochTime
+notes:
+  - >-
+    There is no cross-agency join: every tag but the agency tag is only meaningful within its
+    agency, so a client must carry the agency tag through every call.
+  - >-
+    Typing is uniform and weak — every value arrives as a string in both the XML and JSON forms.
+  - >-
+    The schedule command's shape deliberately mirrors an HTML table (header row of stops, tr rows
+    of times) rather than the object shape the other commands use.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

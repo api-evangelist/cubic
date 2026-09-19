@@ -1,0 +1,128 @@
+generated: '2026-09-19'
+method: searched
+source: https://retro.umoiq.com/xmlFeedDocs/NextBusXMLFeed.pdf
+provider: Cubic Corporation
+providerId: cubic
+api: Umo IQ Public Feed API
+description: >-
+  Cross-cutting runtime semantics for the Umo IQ Public Feed, read from the provider's own
+  feed documentation and confirmed against live responses on 2026-09-19. This is a read-only
+  query feed with a command-dispatch shape that predates REST conventions, so several
+  dimensions below are genuinely not applicable rather than missing.
+auth:
+  style: none
+  detail: Anonymous. No key, token or header. See authentication/cubic-authentication.yml.
+transport:
+  protocol: https
+  methods: [GET]
+  dispatch: >-
+    A single path per response format (/publicXMLFeed, /publicJSONFeed) with the operation
+    selected by a required `command` query parameter. There are no resource paths and no path
+    parameters; every input is a query parameter.
+  content_negotiation: >-
+    By path, not by Accept header. /publicXMLFeed returns text/xml and /publicJSONFeed returns
+    application/json; the Accept header is not honoured as a selector.
+  compression: >-
+    Accept-Encoding gzip,deflate is documented and honoured; the docs claim 50-85% reduction and
+    Vary Accept-Encoding is present on responses.
+  cors:
+    enabled: true
+    evidence: 'Access-Control-Allow-Origin: * observed on every probed response (2026-09-19).'
+idempotency:
+  coverage: na
+  scope: []
+  header: null
+  detail: >-
+    Not applicable: the API has no write surface. Every command is a GET that reads transit
+    configuration, predictions, schedules, messages or vehicle positions. There is nothing to
+    replay and no idempotency key mechanism exists or is needed.
+reversibility:
+  grade: na
+  detail: >-
+    Not applicable for the same reason as idempotency: there is no mutating operation, so there
+    is no action to cancel, refund, void or undo. Read-only by design.
+  write_surfaces: []
+dry_run_mode:
+  supported: na
+  detail: Not applicable — read-only API.
+pagination:
+  style: none
+  detail: >-
+    No pagination exists. Result-size control is by cardinality caps and payload flags instead:
+    routeConfig is capped at 100 routes and accepts `terse` to drop map path data;
+    predictionsForMultiStops is capped at 150 stops per route; prediction commands return at
+    most 5 predictions per direction.
+  incremental: >-
+    vehicleLocations is the one incremental surface: pass the previous response's lastTime value
+    as `t` to receive only reports newer than that timestamp (`t=0` returns the last 15 minutes,
+    maximum 5-minute span).
+field_selection:
+  expansion: false
+  sparse_fields: false
+  flags:
+    - name: terse
+      applies_to: routeConfig
+      effect: Omits path (map polyline) data, roughly halving the payload.
+    - name: verbose
+      applies_to: routeConfig
+      effect: Includes directions flagged useForUI="false", which are hidden by default.
+    - name: useShortTitles
+      applies_to: predictions, predictionsForMultiStops
+      effect: Returns short agency/route/direction/stop titles where the agency defines them.
+metadata:
+  supported: false
+request_id_tracing:
+  supported: false
+  detail: No correlation or request-id header is documented, and none was observed on any probe.
+versioning:
+  style: none-in-contract
+  detail: >-
+    The API carries no version in its path, query or headers. The documentation is versioned
+    instead — revision 1.24, 18 May 2021 — and the stability policy is stated in the doc's
+    "Stability of XML Feed" section: commands and data are intended to change as little as
+    possible, additive XML elements and attributes may appear, and a well-behaved client must
+    ignore unknown elements.
+  compatibility_contract: additive-only, ignore-unknown
+error_envelope:
+  format: proprietary
+  rfc9457: false
+  status_code: >-
+    Always 200, including for errors. The HTTP status carries no signal; the body is the only
+    error channel. See errors/cubic-problem-types.yml.
+  shape_xml: '<body copyright="..."><Error shouldRetry="true|false">message</Error></body>'
+  shape_json: '{"copyright":"...","Error":{"shouldRetry":"false","content":"message"}}'
+  retry_signal: >-
+    shouldRetry is the retry contract: true means the agency server was initialising and the
+    same URL should be retried after 10 seconds; false means the request is wrong and retrying
+    will not help.
+  gotcha: >-
+    On the JSON feed an error has been observed returned as an ARRAY of two identical Error
+    objects (command=routeList with an invalid agency, 2026-09-19) where the XML feed returns
+    one. Clients must accept both an object and an array here.
+rate_limit_signaling:
+  headers: false
+  detail: >-
+    No rate-limit headers of any kind. Limits are published as numbers in the PDF only. See
+    rate-limits/cubic-rate-limits.yml.
+data_typing:
+  detail: >-
+    Everything is a string in both formats — the XML feed carries all values as attributes, and
+    the JSON feed serialises numbers and booleans as quoted strings ("43.6499993", "true").
+    Clients must coerce.
+  time: >-
+    Times are epoch MILLISECONDS (epochTime, lastTime.time, message boundaries), except schedule
+    stop content which is an HH:mm:ss display string and uses epochTime="-1" to mean the trip
+    does not serve that stop.
+  cardinality_gotcha: >-
+    In the JSON feed a member holding one element is an OBJECT and the same member holding
+    several is an ARRAY (route, vehicle, predictions, Error). This is the single most common
+    client bug against this feed.
+cross_links:
+  errors: errors/cubic-problem-types.yml
+  lifecycle: lifecycle/cubic-lifecycle.yml
+  authentication: authentication/cubic-authentication.yml
+  rate_limits: rate-limits/cubic-rate-limits.yml
+  data_model: data-model/cubic-data-model.yml
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

@@ -1,0 +1,75 @@
+generated: '2026-09-19'
+method: searched
+source: https://retro.umoiq.com/xmlFeedDocs/NextBusXMLFeed.pdf
+provider: Cubic Corporation
+providerId: cubic
+api: Umo IQ Public Feed API
+description: >-
+  Versioning, stability and retirement posture for the Umo IQ Public Feed, taken from the
+  provider's own documentation and from what the live host does today. The headline finding is
+  that this is a long-lived legacy surface: the host name itself ("retro") and the licence's
+  unilateral termination clause are the provider's own framing of it.
+versioning:
+  in_contract: false
+  scheme: document-revision
+  current: '1.24'
+  current_dated: '2021-05-18'
+  detail: >-
+    No version appears in the URL, query string or headers. Only the documentation is versioned.
+    Revision 1.24 (18 May 2021) is the newest and moved the host from webservices.nextbus.com to
+    retro.umoiq.com; the document's own revision history runs back to 1.0 (2 November 2009).
+stability_policy:
+  published: true
+  url: https://retro.umoiq.com/xmlFeedDocs/NextBusXMLFeed.pdf
+  statement: >-
+    "It is intended that the commands and the resulting XML data change as little as possible in
+    the future. There will be situations though when the feed will need to change. In particular,
+    additional XML elements and properties might be added. This should not affect a proper XML
+    client though because any new elements should simply be ignored."
+  contract: additive-only; clients must ignore unknown elements
+deprecation_policy:
+  published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  detail: >-
+    No deprecation policy, no notice period, no Sunset or Deprecation headers. The licence
+    reserves the opposite: "Umo IQ reserves the right to terminate or limit the Feed to any or
+    all users at any time and for any reason." An integrator has no contractual warning window.
+  evidence_of_silent_change: >-
+    The documentation's worked example agency, sf-muni, now returns 'Agency parameter "a=sf-muni"
+    is not valid.' (probed 2026-09-19). Agencies leave the feed without any deprecation signal,
+    and the published examples were not updated when they did.
+sla:
+  published: false
+  detail: >-
+    None. The licence disclaims all warranties, caps liability at the greater of one dollar and
+    fees paid, and states "No support is to be provided by Umo IQ to external use of the Feed
+    except for those under written contracts."
+status_page:
+  published: false
+  url: null
+  detail: >-
+    No status page was found for the Umo IQ Public Feed. Searched the feed host, umoiq.com,
+    umomobility.com and www.cubic.com on 2026-09-19; nothing public. No StatusPage pointer is
+    wired in apis.yml as a result.
+support:
+  channel: email
+  contact: umoiq.support@cubic.com
+  detail: The feed documentation directs comments and suggestions to umoiq.support@cubic.com.
+  announcements: >-
+    Revision 1.11 of the documentation (2011) references e-mail groups for announcements and
+    discussions; no current public list or archive was located in 2026.
+deprecated_operations: []
+lineage:
+  - name: NextBus Public XML Feed
+    host: webservices.nextbus.com
+    until: '2021-05-18'
+    note: Original host, retired in favour of retro.umoiq.com by revision 1.24.
+  - name: Umo IQ Public Feed
+    host: retro.umoiq.com
+    from: '2021-05-18'
+    note: Current host. Still live and answering every documented command as of 2026-09-19.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

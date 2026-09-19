@@ -1,0 +1,69 @@
+generated: '2026-09-19'
+method: searched
+source: https://retro.umoiq.com/xmlFeedDocs/NextBusXMLFeed.pdf
+provider: Cubic Corporation
+providerId: cubic
+api: Umo IQ Public Feed API
+format: proprietary
+rfc9457: false
+description: >-
+  Error catalog for the Umo IQ Public Feed. The feed does not use HTTP status codes to signal
+  failure — every response, valid or not, is HTTP 200 — and does not use RFC 9457 problem+json.
+  A failed request returns an Error element inside the normal body envelope, carrying a single
+  machine-readable attribute, shouldRetry, and a human-readable message. The message strings
+  below were captured verbatim from live responses on 2026-09-19.
+envelope:
+  xml: '<body copyright="..."><Error shouldRetry="true|false">message text</Error></body>'
+  json: '{"copyright":"...","Error":{"shouldRetry":"false","content":"message text"}}'
+  json_gotcha: >-
+    Observed returned as an array of two identical Error objects for an invalid agency on
+    command=routeList — accept both object and array.
+  machine_field: shouldRetry
+  human_field: element text (XML) / content (JSON)
+  http_status: 200 on every case below
+retry_contract:
+  shouldRetry_true: >-
+    The agency server was not ready (initialising). The documentation says to wait 10 seconds and
+    retry the same URL.
+  shouldRetry_false: >-
+    The request itself is wrong. Retrying will not fix it; correct the parameters.
+problem_types:
+  - id: unknown-command
+    shouldRetry: false
+    message: '"<value>" is an unknown command.'
+    meaning: The command parameter is not one of the nine documented commands.
+    remediation: Use agencyList, routeList, routeConfig, predictions, predictionsForMultiStops, schedule, messages, vehicleLocations or vehicleLocation.
+    observed: '2026-09-19, command=bogus&a=ttc'
+  - id: invalid-agency
+    shouldRetry: false
+    message: 'Agency parameter "a=<value>" is not valid.'
+    meaning: >-
+      The agency tag is not served. This also fires for agencies that were once served and have
+      since left the feed — the documentation's own example agency sf-muni now returns this.
+    remediation: Call command=agencyList and use a tag from the current list.
+    observed: '2026-09-19, a=sf-muni and a=nonexistent'
+  - id: missing-agency
+    shouldRetry: false
+    message: 'agency parameter "a" must be specified in query string'
+    meaning: A command other than agencyList was called without the a parameter.
+    remediation: Supply a=<agency tag>.
+    observed: '2026-09-19, command=routeList with no a'
+  - id: agency-initialising
+    shouldRetry: true
+    message: >-
+      Agency server cannot accept client while status is: agency name = <agency>, status =
+      UNINITIALIZED, client count = 0, last event = 0 seconds ago. Could not get route list for
+      agency tag "<agency>". Either the route tag is bad or the system is initializing.
+    meaning: >-
+      Documented in the PDF's "Error Messages" section. The agency's backend was still starting.
+      This is the only documented shouldRetry=true case.
+    remediation: Wait 10 seconds and retry the same URL.
+    observed: not reproduced on 2026-09-19 — taken verbatim from the published documentation
+absent_signals:
+  - No 4xx or 5xx status codes are used for application errors.
+  - No error code / type / identifier field exists; the message string is the only discriminator.
+  - No Retry-After header accompanies shouldRetry=true; the 10-second wait is documented in prose only.
+  - No problem+json media type, no type URI, no instance, no trace id.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

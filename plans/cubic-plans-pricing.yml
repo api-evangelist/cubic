@@ -4,29 +4,59 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: Cubic Corporation
 providerId: cubic
 created: '2026-05-04'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-04, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-05'
-reconciled: false
+generated: '2026-09-19'
+method: searched
+source: https://retro.umoiq.com/xmlFeedDocs/NextBusXMLFeed.pdf
+modified: '2026-09-19'
+reconciled: true
 tags:
   - Defense
   - Transportation
-  - Technology
-description: Cubic delivers transit (Cubic Transportation Systems / fare collection / ITS) and defense
-  (Cubic Defense / training / mission systems) under government and commercial contracts. There is no
-  public commercial API price list; APIs ship inside delivered systems and pricing rolls into the underlying
-  contract.
+  - Public Transit
+description: >-
+  Cubic publishes no API price list, because it does not sell APIs as a product. It sells
+  transit and defense systems under agency and government contracts, and the integration
+  surfaces ship inside those systems. The one exception, and it is a real published term rather
+  than an inference, is the Umo IQ Public Feed: its licence agreement states in terms that the
+  feed is "free-of-charge to Umo IQ' respective CUSTOMERS", requires no account and no key, and
+  reserves Cubic's right to terminate or limit access at any time.
 sources:
+  - https://retro.umoiq.com/xmlFeedDocs/NextBusXMLFeed.pdf
   - https://www.cubic.com/
-notes: Cubic is project / contract-priced; no public API plans exist. Reconcile against the relevant
-  government or transit-agency contract.
+notes: >-
+  No self-serve signup, no pricing page, no metered tier exists anywhere on Cubic's or Umo's
+  public surface. Everything other than the public feed is negotiated per contract.
+plan_count: 2
 plans:
+  - id: umo-iq-public-feed
+    name: Umo IQ Public Feed
+    type: free
+    description: >-
+      Anonymous, unauthenticated, read-only access to the transit feed. No account, no key, no
+      billing relationship. Access is bounded by published volume limits rather than by a plan.
+    price: 0
+    currency: USD
+    billing_period: none
+    onboarding: none
+    limits_ref: rate-limits/cubic-rate-limits.yml
+    terms: >-
+      Licensed free of charge to Umo IQ customer agencies. No support outside written contracts.
+      Cubic reserves the right to terminate or limit the feed to any or all users at any time and
+      for any reason.
+    source: https://retro.umoiq.com/xmlFeedDocs/NextBusXMLFeed.pdf
+    elements:
+      - name: Umo IQ Public Feed API
   - id: cubic-contract
     name: Contract / Project
     type: enterprise
-    description: Cubic systems are delivered under transit-agency or government defense contracts; APIs
-      and integrations are scoped to the contract.
+    description: >-
+      Every other Cubic surface — the Umo agency platform, GRIDSMART, Trafficware, and defense
+      systems — is delivered under a transit-agency or government contract, with API access and
+      integration scoped by that contract.
+    price: contact sales
+    currency: USD
+    billing_period: contract
+    onboarding: sales
     entries:
       - label: Contracted system
         description: Negotiated system / project pricing
@@ -41,8 +71,6 @@ plans:
         unit: 1
         price: contact sales
         userMultiplied: false
-    elements:
-      - name: Cubic Corporation API
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
