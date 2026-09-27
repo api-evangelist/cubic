@@ -1,0 +1,19 @@
+{
+  "provider": "cubic",
+  "sources": [
+    "cubic-umo-iq-public-feed-openapi.yml"
+  ],
+  "outputs": [
+    "cubic-public-feed-api-openapi.yml"
+  ],
+  "archived": [
+    "archived openapi/cubic-umo-iq-public-feed-openapi.yml"
+  ],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "cubic-umo-iq-public-feed-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "apis.yml register: written (+1 apis, 1 total)"
+  ],
+  "skipped": []
+}
