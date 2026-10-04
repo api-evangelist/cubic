@@ -151,6 +151,80 @@ components:
           description: Optional numeric ID; may refer to several physical stops (bus bays).
           xml:
             attribute: true
+    Error:
+      type: object
+      description: Returned in place of a payload when the request is bad or the agency server is initialising.
+      properties:
+        shouldRetry:
+          type: string
+          description: '`true` when the server was only initialising — retry after 10 seconds. `false` means the URL itself is wrong and retrying will not help.'
+          enum:
+          - 'true'
+          - 'false'
+          xml:
+            attribute: true
+        content:
+          type: string
+          description: Human-readable message (element text in XML; `content` member in JSON).
+    Direction:
+      type: object
+      properties:
+        tag:
+          type: string
+          xml:
+            attribute: true
+        title:
+          type: string
+          xml:
+            attribute: true
+        name:
+          type: string
+          description: Simplified grouping name such as Inbound/Outbound; not provided by every agency.
+          xml:
+            attribute: true
+        branch:
+          type: string
+          description: Observed on Toronto TTC route configurations (2026-09-19).
+          xml:
+            attribute: true
+        useForUI:
+          type: string
+          enum:
+          - 'true'
+          - 'false'
+          xml:
+            attribute: true
+        stop:
+          type: array
+          description: Ordered stop references (`tag` only).
+          items:
+            type: object
+            properties:
+              tag:
+                type: string
+                xml:
+                  attribute: true
+    Agency:
+      type: object
+      properties:
+        tag:
+          type: string
+          description: Agency tag, the `a` parameter for every other command.
+          xml:
+            attribute: true
+        title:
+          type: string
+          xml:
+            attribute: true
+        shortTitle:
+          type: string
+          description: Only present when it differs from `title`.
+          xml:
+            attribute: true
+        regionTitle:
+          type: string
+          xml:
+            attribute: true
     JsonBody:
       type: object
       description: The JSON rendering. All scalar values are strings. A member that would hold a single element is an object; a repeated element is an array.
@@ -187,82 +261,121 @@ components:
               $ref: '#/components/schemas/Vehicle'
         lastTime:
           $ref: '#/components/schemas/LastTime'
-    Error:
+    ScheduleRow:
       type: object
-      description: Returned in place of a payload when the request is bad or the agency server is initialising.
+      xml:
+        name: tr
       properties:
-        shouldRetry:
+        blockID:
           type: string
-          description: '`true` when the server was only initialising — retry after 10 seconds. `false` means the URL itself is wrong and retrying will not help.'
-          enum:
-          - 'true'
-          - 'false'
           xml:
             attribute: true
-        content:
-          type: string
-          description: Human-readable message (element text in XML; `content` member in JSON).
-    Prediction:
+        stop:
+          type: array
+          items:
+            type: object
+            properties:
+              tag:
+                type: string
+                xml:
+                  attribute: true
+              epochTime:
+                type: string
+                description: Scheduled arrival in epoch milliseconds; `-1` when the trip does not serve the stop.
+                xml:
+                  attribute: true
+              content:
+                type: string
+                description: Time as HH:mm:ss, or `--` when not served.
+    Predictions:
       type: object
       properties:
-        seconds:
+        agencyTitle:
           type: string
           xml:
             attribute: true
-        minutes:
-          type: string
-          description: Display value; round seconds down.
-          xml:
-            attribute: true
-        epochTime:
-          type: string
-          description: Predicted time in epoch milliseconds.
-          xml:
-            attribute: true
-        isDeparture:
-          type: string
-          enum:
-          - 'true'
-          - 'false'
-          xml:
-            attribute: true
-        block:
+        routeTag:
           type: string
           xml:
             attribute: true
-        dirTag:
+        routeCode:
           type: string
           xml:
             attribute: true
-        tripTag:
+        routeTitle:
           type: string
           xml:
             attribute: true
-        branch:
+        stopTag:
           type: string
-          description: Toronto TTC only.
           xml:
             attribute: true
+        stopTitle:
+          type: string
+          xml:
+            attribute: true
+        dirTitleBecauseNoPredictions:
+          type: string
+          description: Present only when there are no predictions, so a UI can still show the direction.
+          xml:
+            attribute: true
+        direction:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+                xml:
+                  attribute: true
+              prediction:
+                type: array
+                description: At most 5 predictions per direction.
+                items:
+                  $ref: '#/components/schemas/Prediction'
+        message:
+          type: array
+          items:
+            type: object
+            properties:
+              text:
+                type: string
+                xml:
+                  attribute: true
+    XmlBody:
+      type: object
+      description: The `<body>` root element of every XML response.
+      xml:
+        name: body
+      properties:
+        copyright:
+          type: string
+          xml:
+            attribute: true
+        Error:
+          $ref: '#/components/schemas/Error'
+        agency:
+          type: array
+          description: Returned by `agencyList`.
+          items:
+            $ref: '#/components/schemas/Agency'
+        route:
+          type: array
+          description: Returned by `routeList` (tag/title only), `routeConfig`, `schedule` and `messages`.
+          items:
+            $ref: '#/components/schemas/Route'
+        predictions:
+          type: array
+          description: Returned by `predictions` and `predictionsForMultiStops`.
+          items:
+            $ref: '#/components/schemas/Predictions'
         vehicle:
-          type: string
-          description: Observed on TTC predictions (2026-09-19); not in the PDF.
-          xml:
-            attribute: true
-        affectedByLayover:
-          type: string
-          description: Only present when true.
-          xml:
-            attribute: true
-        isScheduleBased:
-          type: string
-          description: Only present when true.
-          xml:
-            attribute: true
-        delayed:
-          type: string
-          description: Only present when true; a `slowness` attribute may accompany it (experimental).
-          xml:
-            attribute: true
+          type: array
+          description: Returned by `vehicleLocations` and `vehicleLocation`.
+          items:
+            $ref: '#/components/schemas/Vehicle'
+        lastTime:
+          $ref: '#/components/schemas/LastTime'
     Vehicle:
       type: object
       properties:
@@ -306,6 +419,22 @@ components:
           type: string
           xml:
             attribute: true
+    Path:
+      type: object
+      properties:
+        point:
+          type: array
+          items:
+            type: object
+            properties:
+              lat:
+                type: string
+                xml:
+                  attribute: true
+              lon:
+                type: string
+                xml:
+                  attribute: true
     ScheduleStop:
       type: object
       properties:
@@ -316,41 +445,81 @@ components:
         content:
           type: string
           description: Stop title (element text in XML).
-    Direction:
+    Message:
       type: object
       properties:
-        tag:
+        id:
           type: string
           xml:
             attribute: true
-        title:
+        creator:
           type: string
           xml:
             attribute: true
-        name:
+        sendToBuses:
           type: string
-          description: Simplified grouping name such as Inbound/Outbound; not provided by every agency.
           xml:
             attribute: true
-        branch:
+        startBoundary:
           type: string
-          description: Observed on Toronto TTC route configurations (2026-09-19).
           xml:
             attribute: true
-        useForUI:
+        startBoundaryStr:
           type: string
-          enum:
-          - 'true'
-          - 'false'
           xml:
             attribute: true
-        stop:
+        endBoundary:
+          type: string
+          xml:
+            attribute: true
+        endBoundaryStr:
+          type: string
+          xml:
+            attribute: true
+        text:
+          type: string
+        textSecondaryLanguage:
+          type: string
+        phonemeText:
+          type: string
+        smsText:
+          type: string
+        priority:
+          type: string
+          description: 1 (highest) to 5; Agence metropolitaine de transport only.
+        routeConfiguredForMessage:
           type: array
-          description: Ordered stop references (`tag` only).
           items:
             type: object
             properties:
               tag:
+                type: string
+                xml:
+                  attribute: true
+              stop:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Stop'
+        interval:
+          type: array
+          items:
+            type: object
+            properties:
+              startDay:
+                type: string
+                description: 1 = Monday.
+                xml:
+                  attribute: true
+              startTime:
+                type: string
+                description: Seconds past midnight.
+                xml:
+                  attribute: true
+              endDay:
+                type: string
+                xml:
+                  attribute: true
+              endTime:
                 type: string
                 xml:
                   attribute: true
@@ -448,298 +617,73 @@ components:
           description: Epoch milliseconds of the newest location returned.
           xml:
             attribute: true
-    Message:
+    Prediction:
       type: object
       properties:
-        id:
+        seconds:
           type: string
           xml:
             attribute: true
-        creator:
+        minutes:
+          type: string
+          description: Display value; round seconds down.
+          xml:
+            attribute: true
+        epochTime:
+          type: string
+          description: Predicted time in epoch milliseconds.
+          xml:
+            attribute: true
+        isDeparture:
+          type: string
+          enum:
+          - 'true'
+          - 'false'
+          xml:
+            attribute: true
+        block:
           type: string
           xml:
             attribute: true
-        sendToBuses:
+        dirTag:
           type: string
           xml:
             attribute: true
-        startBoundary:
+        tripTag:
           type: string
           xml:
             attribute: true
-        startBoundaryStr:
+        branch:
           type: string
+          description: Toronto TTC only.
           xml:
             attribute: true
-        endBoundary:
-          type: string
-          xml:
-            attribute: true
-        endBoundaryStr:
-          type: string
-          xml:
-            attribute: true
-        text:
-          type: string
-        textSecondaryLanguage:
-          type: string
-        phonemeText:
-          type: string
-        smsText:
-          type: string
-        priority:
-          type: string
-          description: 1 (highest) to 5; Agence metropolitaine de transport only.
-        routeConfiguredForMessage:
-          type: array
-          items:
-            type: object
-            properties:
-              tag:
-                type: string
-                xml:
-                  attribute: true
-              stop:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Stop'
-        interval:
-          type: array
-          items:
-            type: object
-            properties:
-              startDay:
-                type: string
-                description: 1 = Monday.
-                xml:
-                  attribute: true
-              startTime:
-                type: string
-                description: Seconds past midnight.
-                xml:
-                  attribute: true
-              endDay:
-                type: string
-                xml:
-                  attribute: true
-              endTime:
-                type: string
-                xml:
-                  attribute: true
-    Path:
-      type: object
-      properties:
-        point:
-          type: array
-          items:
-            type: object
-            properties:
-              lat:
-                type: string
-                xml:
-                  attribute: true
-              lon:
-                type: string
-                xml:
-                  attribute: true
-    Predictions:
-      type: object
-      properties:
-        agencyTitle:
-          type: string
-          xml:
-            attribute: true
-        routeTag:
-          type: string
-          xml:
-            attribute: true
-        routeCode:
-          type: string
-          xml:
-            attribute: true
-        routeTitle:
-          type: string
-          xml:
-            attribute: true
-        stopTag:
-          type: string
-          xml:
-            attribute: true
-        stopTitle:
-          type: string
-          xml:
-            attribute: true
-        dirTitleBecauseNoPredictions:
-          type: string
-          description: Present only when there are no predictions, so a UI can still show the direction.
-          xml:
-            attribute: true
-        direction:
-          type: array
-          items:
-            type: object
-            properties:
-              title:
-                type: string
-                xml:
-                  attribute: true
-              prediction:
-                type: array
-                description: At most 5 predictions per direction.
-                items:
-                  $ref: '#/components/schemas/Prediction'
-        message:
-          type: array
-          items:
-            type: object
-            properties:
-              text:
-                type: string
-                xml:
-                  attribute: true
-    Agency:
-      type: object
-      properties:
-        tag:
-          type: string
-          description: Agency tag, the `a` parameter for every other command.
-          xml:
-            attribute: true
-        title:
-          type: string
-          xml:
-            attribute: true
-        shortTitle:
-          type: string
-          description: Only present when it differs from `title`.
-          xml:
-            attribute: true
-        regionTitle:
-          type: string
-          xml:
-            attribute: true
-    ScheduleRow:
-      type: object
-      xml:
-        name: tr
-      properties:
-        blockID:
-          type: string
-          xml:
-            attribute: true
-        stop:
-          type: array
-          items:
-            type: object
-            properties:
-              tag:
-                type: string
-                xml:
-                  attribute: true
-              epochTime:
-                type: string
-                description: Scheduled arrival in epoch milliseconds; `-1` when the trip does not serve the stop.
-                xml:
-                  attribute: true
-              content:
-                type: string
-                description: Time as HH:mm:ss, or `--` when not served.
-    XmlBody:
-      type: object
-      description: The `<body>` root element of every XML response.
-      xml:
-        name: body
-      properties:
-        copyright:
-          type: string
-          xml:
-            attribute: true
-        Error:
-          $ref: '#/components/schemas/Error'
-        agency:
-          type: array
-          description: Returned by `agencyList`.
-          items:
-            $ref: '#/components/schemas/Agency'
-        route:
-          type: array
-          description: Returned by `routeList` (tag/title only), `routeConfig`, `schedule` and `messages`.
-          items:
-            $ref: '#/components/schemas/Route'
-        predictions:
-          type: array
-          description: Returned by `predictions` and `predictionsForMultiStops`.
-          items:
-            $ref: '#/components/schemas/Predictions'
         vehicle:
-          type: array
-          description: Returned by `vehicleLocations` and `vehicleLocation`.
-          items:
-            $ref: '#/components/schemas/Vehicle'
-        lastTime:
-          $ref: '#/components/schemas/LastTime'
-  parameters:
-    vehicle:
-      name: v
-      in: query
-      required: false
-      description: Vehicle id for `vehicleLocation`.
-      schema:
-        type: string
-    stopId:
-      name: stopId
-      in: query
-      required: false
-      description: Numeric stop ID from `routeConfig`, used by `predictions` to get predictions for every route serving the stop. Not every agency assigns stop IDs.
-      schema:
-        type: string
-    agency:
-      name: a
-      in: query
-      required: false
-      description: Agency tag from `agencyList` (e.g. `ttc`). Required by every command except `agencyList`.
-      schema:
-        type: string
-      example: ttc
-    stopTag:
-      name: s
-      in: query
-      required: false
-      description: Stop tag from `routeConfig`, used with `r` by `predictions`. Alphanumeric; may carry `_IB`, `_OB` or `_ar` suffixes for larger agencies.
-      schema:
-        type: string
-    stops:
-      name: stops
-      in: query
-      required: false
-      description: For `predictionsForMultiStops`. Repeat once per stop as `<route tag>|<stop tag>` (e.g. `stops=501|472&stops=501|7813`). Maximum 150 stops per route.
-      style: form
-      explode: true
-      schema:
-        type: array
-        items:
           type: string
-    time:
-      name: t
+          description: Observed on TTC predictions (2026-09-19); not in the PDF.
+          xml:
+            attribute: true
+        affectedByLayover:
+          type: string
+          description: Only present when true.
+          xml:
+            attribute: true
+        isScheduleBased:
+          type: string
+          description: Only present when true.
+          xml:
+            attribute: true
+        delayed:
+          type: string
+          description: Only present when true; a `slowness` attribute may accompany it (experimental).
+          xml:
+            attribute: true
+  parameters:
+    useShortTitles:
+      name: useShortTitles
       in: query
       required: false
-      description: For `vehicleLocations`. Epoch time in milliseconds of the previous call's `lastTime`; `0` returns the last 15 minutes. Maximum timespan 5 minutes.
-      schema:
-        type: string
-    route:
-      name: r
-      in: query
-      required: false
-      description: Route tag from `routeList`. Required by `schedule` and `vehicleLocations`; optional for `routeConfig` (omit for all routes, limited to 100 per request) and `messages` (repeat `r` for several routes); used with `s` by `predictions`.
-      schema:
-        type: string
-      example: '501'
-    terse:
-      name: terse
-      in: query
-      required: false
-      allowEmptyValue: true
-      description: Flag for `routeConfig` — omit path (map polyline) data, roughly halving the payload.
+      description: When `true`, prediction commands return short agency/route/direction/stop titles where the agency defines them.
       schema:
         type: boolean
     command:
@@ -759,6 +703,13 @@ components:
         - messages
         - vehicleLocations
         - vehicleLocation
+    stopTag:
+      name: s
+      in: query
+      required: false
+      description: Stop tag from `routeConfig`, used with `r` by `predictions`. Alphanumeric; may carry `_IB`, `_OB` or `_ar` suffixes for larger agencies.
+      schema:
+        type: string
     verbose:
       name: verbose
       in: query
@@ -767,6 +718,28 @@ components:
       description: Flag for `routeConfig` — include directions with `useForUI="false"`.
       schema:
         type: boolean
+    time:
+      name: t
+      in: query
+      required: false
+      description: For `vehicleLocations`. Epoch time in milliseconds of the previous call's `lastTime`; `0` returns the last 15 minutes. Maximum timespan 5 minutes.
+      schema:
+        type: string
+    terse:
+      name: terse
+      in: query
+      required: false
+      allowEmptyValue: true
+      description: Flag for `routeConfig` — omit path (map polyline) data, roughly halving the payload.
+      schema:
+        type: boolean
+    vehicle:
+      name: v
+      in: query
+      required: false
+      description: Vehicle id for `vehicleLocation`.
+      schema:
+        type: string
     routeTag:
       name: routeTag
       in: query
@@ -774,13 +747,40 @@ components:
       description: Optional route filter for `predictions` when using `stopId`.
       schema:
         type: string
-    useShortTitles:
-      name: useShortTitles
+    agency:
+      name: a
       in: query
       required: false
-      description: When `true`, prediction commands return short agency/route/direction/stop titles where the agency defines them.
+      description: Agency tag from `agencyList` (e.g. `ttc`). Required by every command except `agencyList`.
       schema:
-        type: boolean
+        type: string
+      example: ttc
+    stops:
+      name: stops
+      in: query
+      required: false
+      description: For `predictionsForMultiStops`. Repeat once per stop as `<route tag>|<stop tag>` (e.g. `stops=501|472&stops=501|7813`). Maximum 150 stops per route.
+      style: form
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+    stopId:
+      name: stopId
+      in: query
+      required: false
+      description: Numeric stop ID from `routeConfig`, used by `predictions` to get predictions for every route serving the stop. Not every agency assigns stop IDs.
+      schema:
+        type: string
+    route:
+      name: r
+      in: query
+      required: false
+      description: Route tag from `routeList`. Required by `schedule` and `vehicleLocations`; optional for `routeConfig` (omit for all routes, limited to 100 per request) and `messages` (repeat `r` for several routes); used with `s` by `predictions`.
+      schema:
+        type: string
+      example: '501'
 externalDocs:
   description: Public XML Feed documentation (PDF, revision 1.24)
   url: https://retro.umoiq.com/xmlFeedDocs/NextBusXMLFeed.pdf
