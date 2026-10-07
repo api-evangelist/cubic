@@ -81,6 +81,8 @@ apis:
   - type: X-MCPServerCandidate
     url: mcp/cubic-mcp.yml
 common:
+  - type: Pricing
+    url: https://retro.umoiq.com/xmlFeedDocs/NextBusXMLFeed.pdf
   - type: Website
     url: https://www.cubic.com
   - type: LinkedIn
