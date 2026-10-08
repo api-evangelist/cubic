@@ -81,6 +81,8 @@ apis:
   - type: X-MCPServerCandidate
     url: mcp/cubic-mcp.yml
 common:
+  - type: FinOps
+    url: finops/cubic-finops.yml
   - type: Pricing
     url: https://retro.umoiq.com/xmlFeedDocs/NextBusXMLFeed.pdf
   - type: Website
