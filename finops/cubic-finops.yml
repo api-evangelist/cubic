@@ -109,10 +109,8 @@ apis:
 unitEconomics:
   - name: Cost per Deployed Endpoint
     metric: billed_cost / deployed_endpoints
-    target: TBD
   - name: Cost per Active Consumer
     metric: billed_cost / active_consumers
-    target: TBD
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
