@@ -1,0 +1,63 @@
+edges:
+- partner_name: Open Geospatial Consortium
+  partner: ogc
+  detected_by: sweep-geospatial.py
+  first_seen: '2026-10-14'
+  partner_match: register
+  type: register
+  direction: partner-built
+  channel: standard-directory
+  relationship: standard-participant
+  evidence: https://portal.ogc.org/public_ogc/compliance/implementing.php?org_match=Cubic%20Digital%20Intelligence%20(CDI)
+  conformance:
+    organization: Cubic Digital Intelligence (CDI)
+    domain: cubic.com
+    products: 1
+    compliant_specs:
+    - Web Map Service 1.1.1
+    implementing_specs: []
+    products_list:
+    - name: HiPER LOOK
+      version: '1.4'
+      type: Server
+      pid: '1404'
+      valid_until: '2026-12-01'
+      compliant:
+      - Web Map Service 1.1.1 (2016-12-02)
+  match:
+    method: domain
+    domain: cubic.com
+  contract_reference:
+    register: portal.ogc.org/public_ogc/compliance
+    spec_file: null
+    role: implementation-registration
+    registered_name: Cubic Digital Intelligence (CDI)
+    register_id: Cubic Digital Intelligence (CDI)
+    detected_by: sweep-geospatial.py
+    detected: '2026-10-14'
+- partner_name: Open Geospatial Consortium
+  partner: ogc
+  detected_by: sweep-geospatial.py
+  first_seen: '2026-10-14'
+  partner_match: register
+  type: register
+  direction: partner-built
+  channel: standard-directory
+  relationship: compatible
+  shape: ogc-wms
+  degree: full
+  evidence_kind: conformance-register
+  evidence: https://portal.ogc.org/public_ogc/compliance/product.php?pid=1404
+  conformance:
+    certifications:
+    - product: HiPER LOOK 1.4
+      spec: Web Map Service 1.1.1
+      certified: '2016-12-02'
+      valid_until: '2026-12-01'
+      register_url: https://portal.ogc.org/public_ogc/compliance/product.php?pid=1404
+    standard_versions:
+    - Web Map Service 1.1.1
+  note: OGC's compliance test (CITE executable test suite) was passed and the certification is current in OGC's
+    implementation register
+generated: '2026-10-14'
+method: searched
