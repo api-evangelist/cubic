@@ -1,0 +1,27 @@
+slug: cubic
+provider: Cubic
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Infrastructure
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 1
+edges:
+- tag: Public Feed
+  spec_file: cubic-public-feed-api-openapi.yml
+  capability_id: BC-5080.50
+  capability_id_l1: BC-5080
+  capability_name: Customer & User Operations
+  confidence: 0.7
+  evidence: '"provides transit agency configuration (agencies, routes, stops, directions, paths), arrival/departure
+    predictions, schedules, active service messages and live vehicle locations"'
+  reason: The feed publishes rider-facing operational information (predictions, schedules, service messages,
+    vehicle positions) for live transit networks, which is operational service/information supporting
+    users of the infrastructure network. Not control-room control (read-only public feed), so Customer
+    & User Operations fits better than Network Control, though some ambiguity remains.
