@@ -18,10 +18,10 @@ edges:
   capability_id: BC-5080.50
   capability_id_l1: BC-5080
   capability_name: Customer & User Operations
-  confidence: 0.7
+  confidence: 0.78
   evidence: '"provides transit agency configuration (agencies, routes, stops, directions, paths), arrival/departure
     predictions, schedules, active service messages and live vehicle locations"'
-  reason: The feed publishes rider-facing operational information (predictions, schedules, service messages,
-    vehicle positions) for live transit networks, which is operational service/information supporting
-    users of the infrastructure network. Not control-room control (read-only public feed), so Customer
-    & User Operations fits better than Network Control, though some ambiguity remains.
+  reason: The feed delivers real-time passenger-facing transit information (predictions, service messages,
+    vehicle locations) for transit agencies — operational service information supporting users of the
+    network, i.e. Customer & User Operations within Infrastructure Operations Management. Not control-room
+    operations (read-only public feed), hence the narrower L2 rather than Network Control.
