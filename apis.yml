@@ -81,6 +81,9 @@ apis:
   - type: X-MCPServerCandidate
     url: mcp/cubic-mcp.yml
 common:
+  - type: CapabilityMap
+    url: capabilities/cubic-capability-edges.yml
+    name: Cubic Business Capability Map
   - type: FinOps
     url: finops/cubic-finops.yml
   - type: Pricing
